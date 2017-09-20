@@ -72,9 +72,12 @@ Generate identification and phylogenetic tress for environmental reads
 Installation requirements:  
 Xvfb: Unfortunately has to be installed from an admin in order to create the pdf tree files.  
 
-git clone https://github.com/sproft/MetBaN  
-cd MetBaN  
-make dependencies  
+```bash
+git clone https://github.com/sproft/MetBaN
+cd MetBaN
+make dependencies
+```
+  
 Alternatively all programs can be installed globally see end section  
 
 ## License
@@ -112,4 +115,6 @@ python:
 Install using your favorite package manager  
 
 Afterwards install ETE via pip:  
+```bash
 pip install --upgrade ete3
+```
