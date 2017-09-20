@@ -57,7 +57,7 @@ The script will return a number of pdfs, which is at most the number of specifie
 These are not to be taken as phylogenetic relations, but as a tool to check whether sequences that were identified to belong to a certain taxa are also sorted in the same group in the tree.  
 These trees can be found in the folder labeled pdfs.
 
-Additional information about the identified sequences can be found in a tab file in the folder RESULT.  
+Additional information about the identified sequences can be found in a the provided result file.  
 Usage:  
 ```
 obiall.sh FORWARD_READ.fq REVERSE_READ.fq  
@@ -76,6 +76,9 @@ Generate identification and phylogenetic tress for environmental reads
 -V   show script version  
 -h   show this help  
 ```
+
+Example:
+`./MetBaN.sh 1_S1_L001_R1_001.fastq 1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ../data/outgroup/Bolidomonas_outgroup.fas -r ecoPCR_database2017-05-15 -d download_EMBL/ -o long_test`
 
 ## Installation
 
