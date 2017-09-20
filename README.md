@@ -7,7 +7,7 @@ Automated pipeline for metabarcoding data using taxonomical/phylogenetical class
 ## Motivation
 
 A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
-![alt text](https://github.com/sproft/MetBaN/scr/Workflow.png)
+![workflow](https://github.com/sproft/MetBaN/blob/master/src/Workflow.png)
 
 
 ## Usage
