@@ -34,7 +34,7 @@ For this we need to specify the Primers that were used for capturing the barcode
 Additionally we need to specify the path of the already converted database on which we would like to perform the inSilico PCR.  
 And finally we need to specify the list of taxids for which we would like to create annotated reference sequences that are later required for the tree building step.  
 Usage:
-```bash  
+```  
 ecoPCR_EMBL.sh FORWARD_PRIMER REVERSE_PRIMER  
 Generate reference database for the identification using ecoPCR  
   -i   list of taxids (mandatory)  
@@ -59,7 +59,7 @@ These trees can be found in the folder labeled pdfs.
 
 Additional information about the identified sequences can be found in a tab file in the folder RESULT.  
 Usage:  
-```bash
+```
 obiall.sh FORWARD_READ.fq REVERSE_READ.fq  
 Generate identification and phylogenetic tress for environmental reads  
 -i   list of taxids (mandatory)  
