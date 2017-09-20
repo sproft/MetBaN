@@ -1,38 +1,14 @@
-MetBaN
+## MetBaN
 Version 1.01
-Installation requirements:
-Everything listed in the following section can be installed locally using the installation script, if done so the main script have to be run from the folder that contains the local installation.
-Xvfb: Unfortunately has to be installed from an admin
-Obitools:
-Can be installed using the installation script offered on their website.
-http://metabarcoding.org//obitools/doc/_downloads/get-obitools.py
-To install the OBITools, you require these soft wares to be installed on your system:
-•	Python 2.7 (installed by default on most Unix systems, available from the Python website)
-•	gcc (installed by default on most Unix systems, available from the GNU sites dedicated to GCC and GMake)
+## Synopsis
 
-ecoPCR:
-Can be acquired from the following website:
-https://git.metabarcoding.org/obitools/ecopcr/wikis/home
+Automated pipeline for metabarcoding data using taxonomical/phylogenetical classification of organisms
 
-mafft:
-Can be acquired from the following website:
-http://mafft.cbrc.jp/alignment/software/
+## Motivation
 
-t_coffee:
-Can be acquired from the following website:
-http://www.tcoffee.org/Projects/tcoffee/
+A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
 
-raxmlHPC-AVX2:
-Can be build using the resources from the following websites:
-https://github.com/stamatak/standard-RAxML
-To do: add option to specify raxml version
-xvfb-run:
-Install using your favorite package manager
-
-python:
-Install using your favorite package manager
-Afterwards install ETE via pip:
-pip install --upgrade ete3
+## Usage
 
 The pipeline consists of three scripts:
 download_EMBL.sh
@@ -85,4 +61,52 @@ environmental reads
 -D   delete intermediate files
 -V   show script version
 -h   show this help
+
+
+## Installation
+
+Installation requirements:
+Xvfb: Unfortunately has to be installed from an admin in order to create the pdf tree files.
+
+git clone https://github.com/sproft/MetBaN
+cd MetBaN
+make dependencies
+Alternatively all programs can be installed globally see end section
+
+## License
+
+Licensed under MIT
+
+## Global installation
+Obitools:
+Can be installed using the installation script offered on their website.
+http://metabarcoding.org//obitools/doc/_downloads/get-obitools.py
+To install the OBITools, you require these softwares to be installed on your system:
+•	Python 2.7 (installed by default on most Unix systems, available from the Python website)
+•	gcc (installed by default on most Unix systems, available from the GNU sites dedicated to GCC and GMake)
+
+ecoPCR:
+Can be acquired from the following website:
+https://git.metabarcoding.org/obitools/ecopcr/wikis/home
+
+mafft:
+Can be acquired from the following website:
+http://mafft.cbrc.jp/alignment/software/
+
+t_coffee:
+Can be acquired from the following website:
+http://www.tcoffee.org/Projects/tcoffee/
+
+raxmlHPC-AVX2:
+Can be build using the resources from the following websites:
+https://github.com/stamatak/standard-RAxML
+To do: add option to specify raxml version
+xvfb-run:
+Install using your favorite package manager
+
+python:
+Install using your favorite package manager
+Afterwards install ETE via pip:
+pip install --upgrade ete3
+
 
