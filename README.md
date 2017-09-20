@@ -31,7 +31,8 @@ For this we need to specify the Primers that were used for capturing the barcode
 
 Additionally we need to specify the path of the already converted database on which we would like to perform the inSilico PCR.  
 And finally we need to specify the list of taxids for which we would like to create annotated reference sequences that are later required for the tree building step.  
-Usage:  
+Usage:
+```bash  
 ecoPCR_EMBL.sh FORWARD_PRIMER REVERSE_PRIMER  
 Generate reference database for the identification using ecoPCR  
   -i   list of taxids (mandatory)  
@@ -42,6 +43,7 @@ Generate reference database for the identification using ecoPCR
   -L   upper read length cutoff [$ULENGTH]  
   -V   show script version  
   -h   show this help  
+```
 
 MetBaN.sh:  
 This script is the core of the pipeline.  
@@ -50,6 +52,7 @@ As input it requires the path to both the converted database and the created ref
 For the tree building process we additionally require an outgroup sequence that is has a reasonable phylogenetic distance to the group that is to be analyzed.  
 The script will return a number of pdfs, which is at most the number of specified taxids (can be less when there exist no sequences belonging to a taxa in the fastq files). These are not to be taken as phylogenetic relations, but as a tool to check whether sequences that were identified to belong to a certain taxa are also sorted in the same group in the tree. These trees can be found in the folder labeled pdfs. Additional information about the identified sequences can be found in a tab file in the folder RESULT.  
 Usage:  
+```bash
 obiall.sh FORWARD_READ.fq REVERSE_READ.fq  
 Generate identification and phylogenetic tress for environmental reads  
 -i   list of taxids (mandatory)  
@@ -65,7 +68,7 @@ Generate identification and phylogenetic tress for environmental reads
 -D   delete intermediate files  
 -V   show script version  
 -h   show this help  
-
+```
 
 ## Installation
 
