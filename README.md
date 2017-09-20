@@ -22,7 +22,7 @@ This script will download the latest release of the EMBL gene databank in conjun
 The script will then convert the database into a format that can be used by ObiTools.  
 Usage:  
 •	drop the script in the folder you wish to download the gene bank into  
-•	run using bash (requires around 271G) `./download.sh`  
+•	run using bash (requires around 271G) `./download_EMBL.sh`  
 •	modifying the script allows for selecting specific sequences by having a look at the file structure at ftp://ftp.ebi.ac.uk/pub/databases/embl/release/std/ and modifying the option
 “-A rel_std_\*.dat.gz” accordingly  
 •	The folder “EMBL” can safely be deleted after successful conversion of the EMBL database into a format that can be used by ObiTools  
@@ -77,7 +77,7 @@ Generate identification and phylogenetic tress for environmental reads
 -h   show this help  
 ```
 
-Example:
+Example:  
 `./MetBaN.sh 1_S1_L001_R1_001.fastq 1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ../data/outgroup/Bolidomonas_outgroup.fas -r ecoPCR_database2017-05-15 -d download_EMBL/ -o long_test`
 
 ## Installation
