@@ -7,6 +7,8 @@ Automated pipeline for metabarcoding data using taxonomical/phylogenetical class
 ## Motivation
 
 A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
+![alt text](https://github.com/sproft/MetBaN/scr/Workflow.png)
+
 
 ## Usage
 
@@ -20,7 +22,7 @@ This script will download the latest release of the EMBL gene databank in conjun
 The script will then convert the database into a format that can be used by ObiTools.  
 Usage:  
 •	drop the script in the folder you wish to download the gene bank into  
-•	run using bash (requires around 271G)  
+•	run using bash (requires around 271G) `./download.sh`  
 •	modifying the script allows for selecting specific sequences by having a look at the file structure at ftp://ftp.ebi.ac.uk/pub/databases/embl/release/std/ and modifying the option
 “-A rel_std_\*.dat.gz” accordingly  
 •	The folder “EMBL” can safely be deleted after successful conversion of the EMBL database into a format that can be used by ObiTools  
@@ -49,8 +51,13 @@ MetBaN.sh:
 This script is the core of the pipeline.  
 The main input is the fastq files of the forward and reverse read of the environmental sequences that are to have their taxids identified by ObiTools.  
 As input it requires the path to both the converted database and the created reference sequences created from the specified taxids. These taxids need to be specified again in order to properly create pdfs containing trees that allow checking for the correctness of the identification of the environmental samples.  
+
 For the tree building process we additionally require an outgroup sequence that is has a reasonable phylogenetic distance to the group that is to be analyzed.  
-The script will return a number of pdfs, which is at most the number of specified taxids (can be less when there exist no sequences belonging to a taxa in the fastq files). These are not to be taken as phylogenetic relations, but as a tool to check whether sequences that were identified to belong to a certain taxa are also sorted in the same group in the tree. These trees can be found in the folder labeled pdfs. Additional information about the identified sequences can be found in a tab file in the folder RESULT.  
+The script will return a number of pdfs, which is at most the number of specified taxids (can be less when there exist no sequences belonging to a taxa in the fastq files).
+These are not to be taken as phylogenetic relations, but as a tool to check whether sequences that were identified to belong to a certain taxa are also sorted in the same group in the tree.  
+These trees can be found in the folder labeled pdfs.
+
+Additional information about the identified sequences can be found in a tab file in the folder RESULT.  
 Usage:  
 ```bash
 obiall.sh FORWARD_READ.fq REVERSE_READ.fq  
