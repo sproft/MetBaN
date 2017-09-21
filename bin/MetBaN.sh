@@ -180,8 +180,13 @@ date
 DATABASE=$(get_abs_filename $DATABASE )
 REFERENCE=$(get_abs_filename $REFERENCE )
 OUTGROUP=$(get_abs_filename $OUTGROUP )
+OUT=$(get_abs_filename $OUT )
+ANNOT=$(get_abs_filename $ANNOT )
+
 rm -f -r $OUT/FILES
 mkdir -p $OUT/FILES
+mkdir -p $OUT/FILES/LOGS
+LOG=$(get_abs_filename $OUT/FILES/LOGS )
 
 
 ##############CREATING NGSFILTER############
@@ -213,19 +218,17 @@ cd $OUT/FILES/paired_temp
 paste <(ls ./R1*) <(ls ./R2*) > files
 while read -r F R
 do 
-illuminapairedend --without-progress-bar --score-min=40 $F -r $R 1>$F.paired 2>$F.log & 
+illuminapairedend --without-progress-bar --score-min=40 $F -r $R 1> $F.paired 2> $F.log & 
 done < files
 wait
-#parallel --gnu -j 16 :::: ./pair.script.sh
 cd ../
 cat paired_temp/*paired > paired.fastq 
 rm -rf paired_temp
-cat paired.fastq
 date
 
 echo filtering...
 #filter out the ones that dont have an alignment
-obigrep --without-progress-bar -p 'mode!="joined"' paired.fastq > paired.ali.fastq
+obigrep --without-progress-bar -p 'mode!="joined"' paired.fastq > paired.ali.fastq 2>$LOG/grep.log
 date
 
 #echo checking...
@@ -235,32 +238,32 @@ date
 
 #demultiplexing
 echo demultiplexing...
-ngsfilter --without-progress-bar -t ${REFERENCE}/ngsfilter.txt -u unidentified.paired.fastq paired.ali.fastq > paired.ali.assigned.fastq
+ngsfilter --without-progress-bar -t ${REFERENCE}/ngsfilter.txt -u unidentified.paired.fastq paired.ali.fastq > paired.ali.assigned.fastq 2>$LOG/ngsfilter.log
 date
 
 echo merging...
 #merge identical sequences
-obiuniq --without-progress-bar -m sample -i paired.ali.assigned.fastq > paired.ali.assigned.uniq.fasta
+obiuniq --without-progress-bar -m sample -i paired.ali.assigned.fastq > paired.ali.assigned.uniq.fasta 2>$LOG/uniq.log
 date
 
 echo cleaning...
 #clean the header
-obiannotate --without-progress-bar -k count -k merged_sample paired.ali.assigned.uniq.fasta > paired.ali.assigned.uniq.ann.fasta
+obiannotate --without-progress-bar -k count -k merged_sample paired.ali.assigned.uniq.fasta > paired.ali.assigned.uniq.ann.fasta 2>$LOG/annotate.log
 date
 
 echo checking...
 #check the number of reads
-obistat --without-progress-bar -c count paired.ali.assigned.uniq.ann.fasta | sort -nk1 | head -20 > stat.paired.out
+obistat --without-progress-bar -c count paired.ali.assigned.uniq.ann.fasta | sort -nk1 | head -20 > stat.paired.out 2>$LOG/stat.log
 date
 
 echo filtering...
 #filter useless reads
-obigrep --without-progress-bar -l $LENGTH -p 'count>=2' paired.ali.assigned.uniq.ann.fasta > paired.ali.assigned.uniq.ann.fil.fasta
+obigrep --without-progress-bar -l $LENGTH -p 'count>=2' paired.ali.assigned.uniq.ann.fasta > paired.ali.assigned.uniq.ann.fil.fasta 2>$LOG/grep2.log
 date
 
 echo "finding head reads"
 #find the head reads
-obiclean --without-progress-bar -s merged_sample -r 0.05 -H paired.ali.assigned.uniq.ann.fil.fasta > paired.ali.assigned.uniq.ann.fil.clean.fasta 2>/dev/null
+obiclean --without-progress-bar -s merged_sample -r 0.05 -H paired.ali.assigned.uniq.ann.fil.fasta > paired.ali.assigned.uniq.ann.fil.clean.fasta 2>$LOG/clean.log
 date
 
 #############CLASSIFYING
@@ -269,24 +272,24 @@ mkdir -p RESULTS
 
 echo identifying...
 #identify sequences
-ecotag --without-progress-bar -m $MATCH -d ${DATABASE}/embl_last -R ${REFERENCE}/DIV4.fasta paired.ali.assigned.uniq.ann.fil.clean.fasta > RESULTS/paired.ali.assigned.uniq.ann.fil.clean.tag.fasta
+ecotag --without-progress-bar -m $MATCH -d ${DATABASE}/embl_last -R ${REFERENCE}/DIV4.fasta paired.ali.assigned.uniq.ann.fil.clean.fasta > RESULTS/paired.ali.assigned.uniq.ann.fil.clean.tag.fasta 2>$LOG/ecotag.log
 date
 
 cd RESULTS
 
 echo cleaning...
 #clean the header
-obiannotate --without-progress-bar --delete-tag=scientific_name_by_db --delete-tag=obiclean_samplecount --delete-tag=obiclean_count --delete-tag=obiclean_singletoncount --delete-tag=obiclean_internalcount --delete-tag=obiclean_head --delete-tag=taxid_by_db --delete-tag=obiclean_headcount --delete-tag=id_status --delete-tag=rank_by_db --delete-tag=order_name --delete-tag=order paired.ali.assigned.uniq.ann.fil.clean.tag.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.fasta
+obiannotate --without-progress-bar --delete-tag=scientific_name_by_db --delete-tag=obiclean_samplecount --delete-tag=obiclean_count --delete-tag=obiclean_singletoncount --delete-tag=obiclean_internalcount --delete-tag=obiclean_head --delete-tag=taxid_by_db --delete-tag=obiclean_headcount --delete-tag=id_status --delete-tag=rank_by_db --delete-tag=order_name --delete-tag=order paired.ali.assigned.uniq.ann.fil.clean.tag.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.fasta 2>$LOG/annotate2.log
 date
 
 echo sorting...
 #sort the results by decreasing order of count
-obisort --without-progress-bar -k count -r paired.ali.assigned.uniq.ann.fil.clean.tag.ann.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta
+obisort --without-progress-bar -k count -r paired.ali.assigned.uniq.ann.fil.clean.tag.ann.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta 2>$LOG/sort.log
 date
 
 echo exceling...
 #final excel result
-obitab --without-progress-bar -o paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.tab
+obitab --without-progress-bar -o paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.tab 2>$LOG/tab.log
 date
 
 #############SPLIT BASED ON FAMILIES
@@ -294,7 +297,7 @@ echo splitting...
 
 for i in $TAXIDS
 do
-obigrep --without-progress-bar -r $i -d ${DATABASE}/embl_last paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta > env.${i}.fasta &
+obigrep --without-progress-bar -r $i -d ${DATABASE}/embl_last paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta > env.${i}.fasta 2>$LOG/$i.split.log &
 done 
 wait
 
@@ -305,7 +308,7 @@ cp paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta ./env.fasta
 echo cleaning...
 for i in $TAXIDS
 do
-obiannotate --without-progress-bar -k count -k family_name -k scientific_name env.${i}.fasta > env.${i}.ann.FASTA &
+obiannotate --without-progress-bar -k count -k family_name -k scientific_name env.${i}.fasta > env.${i}.ann.FASTA 2>$LOG/$i.annotate.log &
 done
 wait
 
@@ -317,13 +320,13 @@ if [[ -v ANNOT ]]
 then
   for i in $TAXIDS
   do
-  cat env.${i}.ann.FASTA ${REFERENCE}/DIV4.final.fasta.${i} ${ANNOT}/*.${i} > ./TREE/${i}.FASTA &
+  cat env.${i}.ann.FASTA ${REFERENCE}/DIV4.final.fasta.${i} ${ANNOT}/*.${i} > ./TREE/${i}.FASTA 2>$LOG/$i.concat.log &
   done
   wait
 else
   for i in $TAXIDS
   do
-  cat env.${i}.ann.FASTA ${REFERENCE}/DIV4.final.fasta.${i} > ./TREE/${i}.FASTA &
+  cat env.${i}.ann.FASTA ${REFERENCE}/DIV4.final.fasta.${i} > ./TREE/${i}.FASTA 2>$LOG/$i.concat.log &
   done
   wait
 fi
@@ -337,7 +340,7 @@ for i in $TAXIDS
 do
 if [ -s "../env.${i}.ann.FASTA" ]
 then
-cat $OUTGROUP ${i}.FASTA > ${i}.fasta.outgroup
+cat $OUTGROUP ${i}.FASTA > ${i}.fasta.outgroup 2>$LOG/$i.addoutgroup.log
 fi
 done
 wait
@@ -351,7 +354,7 @@ for i in $TAXIDS
 do
 if [ -e "${i}.fasta.outgroup" ]
 then
-mafft --quiet --thread $THREADS --adjustdirectionaccurately ${i}.fasta.outgroup > ${i}.mafft &
+mafft --quiet --thread $THREADS --adjustdirectionaccurately ${i}.fasta.outgroup > ${i}.mafft 2>$LOG/$i.mafft.log &
 fi
 done
 wait
@@ -363,7 +366,7 @@ for i in $TAXIDS
 do
 if [ -e "${i}.mafft" ]
 then
-t_coffee -other_pg seq_reformat -in ${i}.mafft -out ${i}.mafft.coffee -action +rm_gap 75 &
+t_coffee -other_pg seq_reformat -in ${i}.mafft -out ${i}.mafft.coffee -action +rm_gap 75 2>$LOG/$i.t_coffee.log &
 fi
 done
 wait
@@ -398,7 +401,7 @@ for i in $TAXIDS
 do
 if [ -e "${i}.mafft.coffee" ]
 then
-python seq2id.py ${i}.mafft.coffee > ${i}.mafft.coffee.fasta &
+python seq2id.py ${i}.mafft.coffee > ${i}.mafft.coffee.fasta 2>$LOG/$i.convert.log &
 fi
 done
 wait
@@ -409,7 +412,7 @@ for i in $TAXIDS
 do
 if [ -e "${i}.mafft.coffee.fasta" ]
 then
-raxmlHPC-PTHREADS-AVX2 -T $THREADS -o Seq1 -f a -x 12345 -p 12345 -c 8 -# $BOOT -m GTRCAT -s ${i}.mafft.coffee.fasta -n ${i}.raxml &
+raxmlHPC-PTHREADS-AVX2 -T $THREADS -o Seq1 -f a -x 12345 -p 12345 -c 8 -# $BOOT -m GTRCAT -s ${i}.mafft.coffee.fasta -n ${i}.raxml 2>$LOG/$i.raxml.log &
 fi
 done
 wait
@@ -480,14 +483,14 @@ do
 if [ -e "RAxML_bipartitions.${i}.raxml" ]
 then
 echo ${i}.pdf
-xvfb-run --auto-servernum python ./tree2pdf.py RAxML_bipartitions.${i}.raxml ${i}.mafft.coffee.dict.pkl &
+xvfb-run --auto-servernum python ./tree2pdf.py RAxML_bipartitions.${i}.raxml ${i}.mafft.coffee.dict.pkl 2>$LOG/$i.pdf.log &
 fi
 done
 wait
 date
 
 
-cp -f $OUT/FILES/RESULTS/*.tab $OUT
+cp -f $OUT/FILES/RESULTS/*.tab $OUT/clas.res.tab
 cp -rf $OUT/FILES/RESULTS/TREE/pdfs $OUT
 cp -rf $OUT/FILES/RESULTS/TREE/nwk $OUT
 
