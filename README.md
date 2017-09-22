@@ -6,8 +6,9 @@ Automated pipeline for metabarcoding data using taxonomical/phylogenetical class
 
 ## Motivation
 
-This project aims to streamline the process of classifying the species in a metabarcoding experiment.
+This project aims to streamline the process of classifying the species in a metabarcoding experiment.  
 This pipeline uses a combination of searching for the species via the EMBL database RAxML in order to fit the identefied sequences into a phylogenetic treem in order to occasionally improve and facillitate the classification process when a researcher reviewes the results. 
+
 ![workflow](https://github.com/sproft/MetBaN/blob/master/src/Workflow.png)
 
 
