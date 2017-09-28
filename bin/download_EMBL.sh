@@ -1,5 +1,14 @@
 #!/bin/bash -e
 
+UDIR=$DIR/../util/
+LDIR=$DIR/../lib/
+
+# check binaries
+PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAXML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/export/bin:$PATH;
+for bin in obiconvert; do
+    check_bin $bin;
+done;
+
 mkdir -p embl_last
 cd embl_last
 
