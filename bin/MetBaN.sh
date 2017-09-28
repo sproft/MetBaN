@@ -181,22 +181,16 @@ DATABASE=$(get_abs_filename $DATABASE )
 REFERENCE=$(get_abs_filename $REFERENCE )
 OUTGROUP=$(get_abs_filename $OUTGROUP )
 OUT=$(get_abs_filename $OUT )
+if [[ -v ANNOT ]]
+then
 ANNOT=$(get_abs_filename $ANNOT )
+fi
 
 rm -f -r $OUT/FILES
 mkdir -p $OUT/FILES
 mkdir -p $OUT/FILES/LOGS
 LOG=$(get_abs_filename $OUT/FILES/LOGS )
 
-
-##############CREATING NGSFILTER############
-printf "# 		sample		tags	forwardprimer		reverseprimer\n" > diat_ngsfilter.txt		
-printf "lakesample	div4	n	GCGGTAATTCCAGCTCCAATAG	CTCTGACAATGGAATACGAATA	F	@\n" >> diat_ngsfilter.txt
-printf "lakesample      div4    a       GCGGTAATTCCAGCTCCAATAG   CTCTGACAATGGAATACGAATA  F       @\n" >> diat_ngsfilter.txt
-printf "lakesample      div4    c       GCGGTAATTCCAGCTCCAATAG   CTCTGACAATGGAATACGAATA  F       @\n" >> diat_ngsfilter.txt
-printf "lakesample      div4    g       GCGGTAATTCCAGCTCCAATAG   CTCTGACAATGGAATACGAATA  F       @\n" >> diat_ngsfilter.txt
-printf "lakesample      div4    t       GCGGTAATTCCAGCTCCAATAG   CTCTGACAATGGAATACGAATA  F       @" >> diat_ngsfilter.txt
-################DO NOT CHANGE##############
 
 
 ##############PREPARING THE FILES
@@ -261,7 +255,7 @@ echo filtering...
 obigrep --without-progress-bar -l $LENGTH -p 'count>=2' paired.ali.assigned.uniq.ann.fasta > paired.ali.assigned.uniq.ann.fil.fasta 2>$LOG/grep2.log
 date
 
-echo "finding head reads"
+echo "finding head reads..."
 #find the head reads
 obiclean --without-progress-bar -s merged_sample -r 0.05 -H paired.ali.assigned.uniq.ann.fil.fasta > paired.ali.assigned.uniq.ann.fil.clean.fasta 2>$LOG/clean.log
 date
@@ -302,7 +296,7 @@ done
 wait
 
 cp paired.ali.assigned.uniq.ann.fil.clean.tag.ann.sort.fasta ./env.fasta
-
+date
 
 #clean header again after splitting
 echo cleaning...
@@ -311,6 +305,7 @@ do
 obiannotate --without-progress-bar -k count -k family_name -k scientific_name env.${i}.fasta > env.${i}.ann.FASTA 2>$LOG/$i.annotate.log &
 done
 wait
+date
 
 mkdir -p TREE
 
@@ -330,12 +325,13 @@ else
   done
   wait
 fi
+date
 
 cd TREE
 
 ###########################ADD OUTGROUP
 
-echo adding outgroup
+echo adding outgroup...
 for i in $TAXIDS
 do
 if [ -s "../env.${i}.ann.FASTA" ]
@@ -344,7 +340,7 @@ cat $OUTGROUP ${i}.FASTA > ${i}.fasta.outgroup 2>$LOG/$i.addoutgroup.log
 fi
 done
 wait
-
+date
 
 ###########################BUILDING TREE
 
@@ -358,7 +354,7 @@ mafft --quiet --thread $THREADS --adjustdirectionaccurately ${i}.fasta.outgroup 
 fi
 done
 wait
-
+date
 
 #T-Coffee
 echo "drinking coffee..."
@@ -370,7 +366,7 @@ t_coffee -other_pg seq_reformat -in ${i}.mafft -out ${i}.mafft.coffee -action +r
 fi
 done
 wait
-
+date
 
 #########CREATE TRANS : DO NOT CHANGE ANYTHING!############
 echo '################CONVERT SEQ NAMES' > seq2id.py
@@ -405,6 +401,7 @@ python seq2id.py ${i}.mafft.coffee > ${i}.mafft.coffee.fasta 2>$LOG/$i.convert.l
 fi
 done
 wait
+date
 
 #RAXML BUILD THE TREE
 echo raxmling...
@@ -416,6 +413,7 @@ raxmlHPC-PTHREADS-AVX2 -T $THREADS -o Seq1 -f a -x 12345 -p 12345 -c 8 -# $BOOT 
 fi
 done
 wait
+date
 
 mkdir -p pdfs
 mkdir -p nwk
@@ -472,7 +470,7 @@ echo '        count=n.name_splitted[0].split("count=")[1]' >> tree2pdf.py
 echo '        n.set_style(nstyleG)' >> tree2pdf.py
 echo '        n.add_face(TextFace(count),column=0,position="aligned")' >> tree2pdf.py
 echo 't.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)' >> tree2pdf.py
-echo 't.write(format=1, outfile="./nwk/"+sys.argv[1]+".nw")' >> tree2pdf.py
+echo 't.write(format=1, outfile="./nwk/"+sys.argv[1]+".nwk")' >> tree2pdf.py
 #########################################################
 chmod +x tree2pdf.py
 

@@ -51,10 +51,10 @@ Generate reference database for the identification using ecoPCR
 
 MetBaN.sh:  
 This script is the core of the pipeline.  
-The main input is the fastq files of the forward and reverse read of the environmental sequences that are to have their taxids identified by ObiTools.  
+The main input are the fastq files of the forward and reverse read of the environmental sequences that are to have their taxids identified by ObiTools.  
 As input it requires the path to both the converted database and the created reference sequences created from the specified taxids. These taxids need to be specified again in order to properly create pdfs containing trees that allow checking for the correctness of the identification of the environmental samples.  
 
-For the tree building process we additionally require an outgroup sequence that is has a reasonable phylogenetic distance to the group that is to be analyzed.  
+For the tree building process we additionally require an outgroup sequence that has a reasonable phylogenetic distance to the group that is to be analyzed.  
 The script will return a number of pdfs, which is at most the number of specified taxids (can be less when there exist no sequences belonging to a taxa in the fastq files).
 These are not to be taken as phylogenetic relations, but as a tool to check whether sequences that were identified to belong to a certain taxa are also sorted in the same group in the tree.  
 These trees can be found in the folder labeled pdfs.

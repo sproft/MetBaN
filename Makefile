@@ -21,7 +21,7 @@ dependencies:
 util/mafft:
 	mkdir -p util
 	cd util && wget http://mafft.cbrc.jp/alignment/software/mafft-7.310-with-extensions-src.tgz 
-	cd util && tar xfvz mafft-*-with-extensions-src.tgz && rm mafft-*-with-extensions-src.tgz && mv mafft-*-with-extensions-src mafft
+	cd util && tar xfvz mafft-*-with-extensions-src.tgz && rm mafft-*-with-extensions-src.tgz && mv mafft-*-with-extensions mafft
 	cd util/mafft/core && make
 
 util/tcoffee:
@@ -39,7 +39,8 @@ util/miniconda:
 	mkdir -p util
 	cd util && wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O Miniconda-latest-Linux-x86_64.sh
 	cd util && bash Miniconda-latest-Linux-x86_64.sh -b -p anaconda_ete/ && rm Miniconda-latest-Linux-x86_64.sh
-	cd util/anaconda_ete/bin && ./conda install -y -c etetoolkit ete3 ete3_external_apps && ./conda install -y -c conda-forge xvfbwrapper
+	cd util/anaconda_ete/bin && ./conda install -y -c etetoolkit ete3 ete3_external_apps 
+	#&& ./conda install -y -c conda-forge xvfbwrapper
 
 util/obitools:
 	mkdir -p util
