@@ -164,7 +164,7 @@ fi
 
 
 # check binaries
-PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAXML:$UDIR/anaconda_ete/bin:$UDIR/OBITools-*/export/bin:$PATH;
+PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAXML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/export/bin:$PATH;
 for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-AVX2 xvfb-run python; do
     check_bin $bin;
 done;

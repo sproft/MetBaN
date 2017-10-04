@@ -45,7 +45,8 @@ util/miniconda:
 util/obitools:
 	mkdir -p util
 	cd util && wget http://metabarcoding.org/obitools/doc/_downloads/get-obitools.py
-	cd util && anaconda_ete/bin/python get-obitools.py && rm get-obitools.py && rm obitools
+	cd util && anaconda_ete/bin/python get-obitools.py && rm get-obitools.py && rm obitools && mkdir -p OBITools
+	cd util && cp OBITools-*/export/bin/* ./OBITools
 	
 
 #util/seqtk:
