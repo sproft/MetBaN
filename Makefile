@@ -1,4 +1,4 @@
-PATH := bin:util/mafft/scripts:util/tcoffee/compile:util/standard-RAXML:util/anaconda_ete/bin:util/OBITools/export/bin:$(PATH)
+PATH := bin:util/mafft/scripts:util/tcoffee/compile:util/standard-RAXML:util/anaconda_ete/bin:util/OBITools-*/export/bin:$(PATH)
 
 .PHONY: all clean dependencies
 
@@ -45,7 +45,7 @@ util/miniconda:
 util/obitools:
 	mkdir -p util
 	cd util && wget http://metabarcoding.org/obitools/doc/_downloads/get-obitools.py
-	cd util && anaconda_ete/bin/python get-obitools.py && rm get-obitools.py && rm obitools && mv OBITools* OBITools
+	cd util && anaconda_ete/bin/python get-obitools.py && rm get-obitools.py && rm obitools
 	
 
 #util/seqtk:
