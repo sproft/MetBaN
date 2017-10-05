@@ -93,7 +93,15 @@ cd MetBaN
 make dependencies
 ```
   
-Alternatively all programs can be installed globally see end section  
+Alternatively all programs can be installed globally see end section 
+
+A small test script can be run here:  
+```bash
+cd test
+./test.sh
+``` 
+
+This script checks whether everything works as it's supposed to.  
 
 ## License
 
