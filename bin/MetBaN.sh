@@ -155,6 +155,12 @@ echo "the annotated database directory does not exist" >&2
 exit 1
 fi
 
+if [[ -d $(get_abs_filename $OUT) ]]
+then
+echo "the output directory already exists, please specify a new one or delete the old one" >&2
+exit 1
+fi
+
 #check for forward and reverse read
 if [[ $# -ne 2 ]] ; then
 echo 'arguments: FORWARD_READS REVERSE_READS'
