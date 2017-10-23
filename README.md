@@ -141,3 +141,7 @@ Afterwards install ETE via pip:
 ```bash
 pip install --upgrade ete3
 ```
+
+## Citation  
+[![DOI](https://zenodo.org/badge/103414256.svg)](https://zenodo.org/badge/latestdoi/103414256)  
+
