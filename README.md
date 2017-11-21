@@ -64,18 +64,19 @@ Usage:
 ```
 obiall.sh FORWARD_READ.fq REVERSE_READ.fq  
 Generate identification and phylogenetic tress for environmental reads  
--i   list of taxids (mandatory)  
--g   path to the fasta that contains a single outgroup sequence (mandatory)  
--d   path to converted EMBL database directory (mandatory)  
--r   path to reference database directory (mandatory)  
--a   annotated sequences for the tree building  
--o   output directory [$OUT]  
--m   match cutoff [$MATCH]  
--t   number of threads / parallel processes [$THREADS]  
--l   read length cutoff [$LENGTH]  
--b   number of bootstrap runs in the tree building process [$BOOT]  
--D   delete intermediate files  
--V   show script version  
+-i   list of taxids (mandatory)
+-g   path to the fasta that contains a single outgroup sequence (mandatory)
+-d   path to EMBL database directory (mandatory)
+-r   path to reference database directory (mandatory)
+-a   annotated sequences for the tree building
+-o   output directory [$OUT]
+-m   match cutoff [$MATCH]
+-t   number of threads / parallel processes [$THREADS]
+-l   read length cutoff [$LENGTH]
+-b   number of bootstrap runs in the tree building process [$BOOT]
+-P   run pipeline with already paired reads
+-D   delete intermediate files
+-V   show script version
 -h   show this help  
 ```
 

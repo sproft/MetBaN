@@ -23,6 +23,7 @@ environmental reads
 -t   number of threads / parallel processes [$THREADS]
 -l   read length cutoff [$LENGTH]
 -b   number of bootstrap runs in the tree building process [$BOOT]
+-P   run pipeline with already paired reads
 -D   delete intermediate files
 -V   show script version
 -h   show this help
@@ -75,7 +76,7 @@ loge ok
 }
 
 # Execute getopt and check opts/args
-ARGS=`getopt -n "$SCR" -o "t:a:g:i:o:l:m:d:r:b:DhV" -- "$@"`
+ARGS=`getopt -n "$SCR" -o "t:a:g:i:o:l:m:d:r:b:PDhV" -- "$@"`
 [ $? -ne 0 ] && exit 1; # Bad arguments
 eval set -- "$ARGS"
 
@@ -84,6 +85,7 @@ OUT='phylogenetic-trees'`date +%F`
 LENGTH=150
 MATCH=0.9
 DELETE=0
+PAIRED=0
 BOOT=100
 
 while true; do
@@ -100,11 +102,33 @@ case "$1" in
 -a) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); ANNOT="$2"; shift 2;;
 #-z) GZIP=1; shift 1;;
 -D) DELETE=1; shift 1;;
+-P) PAIRED=1; shift 1;;
 -h) usage && exit 0;;
 -V) echo $VERSION && exit 0;;
 --) shift; break;;
 esac
 done;
+
+#check for forward and reverse read
+if [ $PAIRED -eq 0 ] ; then
+   if [[ $# -ne 2 ]] ; then
+      echo 'arguments: FORWARD_READS REVERSE_READS'
+      exit 1
+   #elif [ -s "$1" || -s "$2" ] ; then
+   #   echo 'one of your read-files is empty'
+   #   exit 1
+   fi
+else
+   if [[ $# -ne 1 ]] ; then
+      echo 'arguments: PAIRED_READS'
+      exit 1
+   #elif [ -s "$1" ] ; then
+   #   echo 'your paired readfile is empty'
+   #   exit 1
+   fi
+fi
+
+
 
 #check for mandatory options
 if ! [[ -v TAXIDS ]]
@@ -161,13 +185,6 @@ echo "the output directory already exists, please specify a new one or delete th
 exit 1
 fi
 
-#check for forward and reverse read
-if [[ $# -ne 2 ]] ; then
-echo 'arguments: FORWARD_READS REVERSE_READS'
-exit 1
-fi
-
-
 
 # check binaries
 PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
@@ -187,6 +204,7 @@ DATABASE=$(get_abs_filename $DATABASE )
 REFERENCE=$(get_abs_filename $REFERENCE )
 OUTGROUP=$(get_abs_filename $OUTGROUP )
 OUT=$(get_abs_filename $OUT )
+
 if [[ -v ANNOT ]]
 then
 ANNOT=$(get_abs_filename $ANNOT )
@@ -201,45 +219,56 @@ LOG=$(get_abs_filename $OUT/FILES/LOGS )
 
 ##############PREPARING THE FILES
 
-fileF="$1"
-fileR="$2"
 
-echo pairing...
-#pair the forward and backward read
-#illuminapairedend --without-progress-bar --score-min=40 -r $(get_abs_filename $fileR ) $(get_abs_filename $fileF ) > $OUT/FILES/paired.fastq
-#date
+if [ $PAIRED -eq 0 ];then
+  fileF="$1"
+  fileR="$2"
 
+  echo pairing...
+  #pair the forward and backward read
+  #illuminapairedend --without-progress-bar --score-min=40 -r $(get_abs_filename $fileR ) $(get_abs_filename $fileF ) > $OUT/FILES/paired.fastq
+  #date
 
-rm -rf $OUT/FILES/paired_temp
-mkdir -p $OUT/FILES/paired_temp
-cat $(get_abs_filename $fileF ) | split - -l 8000 $OUT/FILES/paired_temp/R1
-cat $(get_abs_filename $fileR ) | split - -l 8000 $OUT/FILES/paired_temp/R2
-cd $OUT/FILES/paired_temp
-paste <(ls ./R1*) <(ls ./R2*) > files
-while read -r F R
-do 
-illuminapairedend --without-progress-bar --score-min=40 $F -r $R 1> $F.paired 2> $F.log & 
-done < files
-wait
-cd ../
-cat paired_temp/*paired > paired.fastq 
-rm -rf paired_temp
-date
+  rm -rf $OUT/FILES/paired_temp
+  mkdir -p $OUT/FILES/paired_temp
+  cat $(get_abs_filename $fileF ) | split - -l 8000 $OUT/FILES/paired_temp/R1
+  cat $(get_abs_filename $fileR ) | split - -l 8000 $OUT/FILES/paired_temp/R2
+  cd $OUT/FILES/paired_temp
+  paste <(ls ./R1*) <(ls ./R2*) > files
+  while read -r F R
+  do 
+  illuminapairedend --without-progress-bar --score-min=40 $F -r $R 1> $F.paired 2> $F.log & 
+  done < files
+  wait
+  cd ../
+  cat paired_temp/*paired > paired.fastq 
+  rm -rf paired_temp
+  date
 
-echo filtering...
-#filter out the ones that dont have an alignment
-obigrep --without-progress-bar -p 'mode!="joined"' paired.fastq > paired.ali.fastq 2>$LOG/grep.log
-date
+  echo filtering...
+  #filter out the ones that dont have an alignment
+  obigrep --without-progress-bar -p 'mode!="joined"' paired.fastq > paired.ali.fastq 2>$LOG/grep.log
+  date
+
+  #demultiplexing
+  echo demultiplexing...
+  ngsfilter --without-progress-bar -t ${REFERENCE}/ngsfilter.txt -u unidentified.paired.fastq paired.ali.fastq > paired.ali.assigned.fastq 2>$LOG/ngsfilter.log
+  date
+
+else
+  fileP="$1"
+  cd $OUT/FILES
+  
+  #demultiplexing
+  echo demultiplexing...
+  ngsfilter --without-progress-bar -t ${REFERENCE}/ngsfilter.txt -u unidentified.paired.fastq $fileP > paired.ali.assigned.fastq 2>$LOG/ngsfilter.log
+  date
+fi
 
 #echo checking...
 #check progress
 #obihead --without-progress-bar --without-progress-bar -n 1 paired.ali.fastq
 #date
-
-#demultiplexing
-echo demultiplexing...
-ngsfilter --without-progress-bar -t ${REFERENCE}/ngsfilter.txt -u unidentified.paired.fastq paired.ali.fastq > paired.ali.assigned.fastq 2>$LOG/ngsfilter.log
-date
 
 echo merging...
 #merge identical sequences
