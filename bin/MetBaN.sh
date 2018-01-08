@@ -112,18 +112,18 @@ done;
 #check for forward and reverse read
 if [ $PAIRED -eq 0 ] ; then
    if [[ $# -ne 2 ]] ; then
-      echo 'arguments: FORWARD_READS REVERSE_READS'
+      echo "arguments: FORWARD_READS REVERSE_READS"
       exit 1
    #elif [ -s "$1" || -s "$2" ] ; then
-   #   echo 'one of your read-files is empty'
+   #   echo "one of your read-files is empty"
    #   exit 1
    fi
 else
    if [[ $# -ne 1 ]] ; then
-      echo 'arguments: PAIRED_READS'
+      echo "arguments: PAIRED_READS"
       exit 1
    #elif [ -s "$1" ] ; then
-   #   echo 'your paired readfile is empty'
+   #   echo "your paired readfile is empty"
    #   exit 1
    fi
 fi
@@ -404,24 +404,24 @@ wait
 date
 
 #########CREATE TRANS : DO NOT CHANGE ANYTHING!############
-echo '################CONVERT SEQ NAMES' > seq2id.py
-echo 'import pickle,sys' >> seq2id.py
-echo '' >> seq2id.py
-echo 'd = dict()' >> seq2id.py
-echo 'f=open(sys.argv[1],"r")' >> seq2id.py
-echo 'i=1' >> seq2id.py
-echo 'for l in f:' >> seq2id.py
-echo '    if l.startswith(">"):' >> seq2id.py
-echo '        d["Seq"+str(i)]=l[1:]' >> seq2id.py
-echo '        print ">Seq"+str(i)' >> seq2id.py
-echo '        i=i+1' >> seq2id.py
-echo '    else:' >> seq2id.py
-echo '        print l' >> seq2id.py
-echo ''  >> seq2id.py
-echo ''  >> seq2id.py
-echo '# Store data (serialize)' >> seq2id.py
-echo 'with open(sys.argv[1]+".dict.pkl", "wb") as handle:' >> seq2id.py
-echo '    pickle.dump(d, handle, protocol=pickle.HIGHEST_PROTOCOL)' >> seq2id.py
+echo '################CONVERT SEQ NAMES
+import pickle,sys
+
+d = dict()
+f=open(sys.argv[1],"r")
+i=1
+for l in f:
+    if l.startswith(">"):
+        d["Seq"+str(i)]=l[1:]
+        print ">Seq"+str(i)
+        i=i+1
+    else:
+        print l
+
+
+# Store data (serialize)
+with open(sys.argv[1]+".dict.pkl", "wb") as handle:
+    pickle.dump(d, handle, protocol=pickle.HIGHEST_PROTOCOL)' > seq2id.py
 #############################################################################
 chmod +x seq2id.py
 
@@ -454,63 +454,124 @@ mkdir -p pdfs
 mkdir -p nwk
 
 ###########CREATE TREE2PDF : DO NOT CHANGE###############
-echo '# -*- coding: utf-8 -*-' > tree2pdf.py
-echo '"""' >> tree2pdf.py
-echo 'Created on Wed Feb 24 15:59:18 2016' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '@author: sebas' >> tree2pdf.py
-echo '"""' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo 'import pickle,sys' >> tree2pdf.py
-echo 'from ete3 import Tree, NodeStyle, TreeStyle, faces, AttrFace, CircleFace, TextFace' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '# Basic tree style' >> tree2pdf.py
-echo 'ts = TreeStyle()' >> tree2pdf.py
-echo 'ts.show_leaf_name = True' >> tree2pdf.py
-echo 'ts.scale = 20' >> tree2pdf.py
-echo 'ts.show_branch_support = True' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '#set node style' >> tree2pdf.py
-echo 'nstyleR = NodeStyle()' >> tree2pdf.py
-echo 'nstyleR["bgcolor"] = "red"' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '#set node style' >> tree2pdf.py
-echo 'nstyleY = NodeStyle()' >> tree2pdf.py
-echo 'nstyleY["bgcolor"] = "yellow"' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '#set node style' >> tree2pdf.py
-echo 'nstyleG = NodeStyle()' >> tree2pdf.py
-echo 'nstyleG["bgcolor"] = "green"' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '#set node style' >> tree2pdf.py
-echo 'nstyleP = NodeStyle()' >> tree2pdf.py
-echo 'nstyleP["bgcolor"] = "pink"' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo 't = Tree(sys.argv[1])' >> tree2pdf.py
-echo 'd = pickle.load(open( sys.argv[2], "rb"))' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo '' >> tree2pdf.py
-echo 'env=0' >> tree2pdf.py
-echo '#iterate through leaves only' >> tree2pdf.py
-echo 'for n in t:' >> tree2pdf.py
-echo '    n.name=d[n.name]' >> tree2pdf.py
-echo '    if " REFERENCE; count=" in n.name:' >> tree2pdf.py
-echo '        n.name=n.name.split(";")[3].split("scientific_name=")[1]+" "+n.name.split(";")[0]' >> tree2pdf.py
-echo '        n.set_style(nstyleY)' >> tree2pdf.py
-echo '    elif " count=" in n.name:' >> tree2pdf.py
-echo '        n.name_splitted=n.name.split(";")' >> tree2pdf.py
-echo '        n.name=n.name_splitted[2].split("scientific_name=")[1]+" "+n.name_splitted[0].split("-")[1].split("_CONS_SUB_SUB")[0]' >> tree2pdf.py
-echo '        count=n.name_splitted[0].split("count=")[1]' >> tree2pdf.py
-echo '        n.set_style(nstyleG)' >> tree2pdf.py
-echo '        n.add_face(TextFace(count),column=0,position="aligned")' >> tree2pdf.py
-echo 't.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)' >> tree2pdf.py
-echo 't.write(format=1, outfile="./nwk/"+sys.argv[1]+".nwk")' >> tree2pdf.py
+echo '# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 24 15:59:18 2016
+
+@author: sebas
+"""
+
+
+##########################The following code was taken from https://github.com/linsalrob/EdwardsLab/blob/master/trees/tree_to_cophenetic_matrix.py
+import os
+import sys
+import argparse
+from itertools import combinations
+from ete3 import Tree
+
+
+def make_matrix(treefile):
+    """
+    Create a matrix from a tree file
+    :param treefile:
+    :return:
+    """
+
+    tree = treefile
+
+    leaves = tree.get_leaves()
+    paths = {x:set() for x in leaves}
+
+    # get the paths going up the tree
+    # we get all the nodes up to the last one and store them in a set
+    #sys.stderr.write("Precalculating distances\n")
+    for n in leaves:
+        if n.is_root():
+            continue
+        movingnode = n
+        while not movingnode.is_root():
+            paths[n].add(movingnode)
+            movingnode = movingnode.up
+
+    # now we want to get all pairs of nodes using itertools combinations. We need AB AC etc but dont need BA CA
+
+    leaf_distances = {x.name:{} for x in leaves}
+
+    #sys.stderr.write("Iterating over the leaves\n")
+    for (leaf1, leaf2) in combinations(leaves, 2):
+        # figure out the unique nodes in the path
+        uniquenodes = paths[leaf1] ^ paths[leaf2]
+        distance = sum(x.dist for x in uniquenodes)
+        leaf_distances[leaf1.name][leaf2.name] = leaf_distances[leaf2.name][leaf1.name] = distance
+
+    return leaf_distances
+#####################################################################################################################
+
+
+import pickle,sys
+from ete3 import Tree, NodeStyle, TreeStyle, faces, AttrFace, CircleFace, TextFace
+
+# Basic tree style
+ts = TreeStyle()
+ts.show_leaf_name = True
+ts.scale = 20
+ts.show_branch_support = True
+
+#set node style
+nstyleR = NodeStyle()
+nstyleR["bgcolor"] = "red"
+
+#set node style
+nstyleY = NodeStyle()
+nstyleY["bgcolor"] = "yellow"
+
+#set node style
+nstyleG = NodeStyle()
+nstyleG["bgcolor"] = "green"
+
+#set node style
+nstyleP = NodeStyle()
+nstyleP["bgcolor"] = "pink"
+
+
+t = Tree(sys.argv[1])
+d = pickle.load(open( sys.argv[2], "rb"))
+all_env=[]
+
+#iterate through leaves only
+for n in t:
+    n.add_features(env=False,old_name=n.name)
+    n.name=d[n.name]
+    if " REFERENCE; count=" in n.name:
+        n.name=n.name.split(";")[3].split("scientific_name=")[1]+" "+n.name.split(";")[0]
+        n.set_style(nstyleY)
+    elif " count=" in n.name:
+        n.add_features(env=True)
+        n.name_splitted=n.name.split(";")
+        n.name=n.name_splitted[2].split("scientific_name=")[1]+" "+n.name_splitted[0].split("-")[1].split("_CONS_SUB_SUB")[0]
+        count=n.name_splitted[0].split("count=")[1]
+        n.set_style(nstyleG)
+        n.add_face(TextFace(count),column=0,position="aligned")
+        all_env.append(n.name)
+
+t.write(format=1, outfile="./nwk/"+sys.argv[1]+".nwk")
+t.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)
+
+#find the closest non environmental leave
+m=make_matrix(t)
+f=open("nwk/neighbour_result.tsv","w")
+for n in all_env:
+    pre_min=min(m[n], key=m[n].get)
+    while pre_min in all_env:
+        m[n][pre_min]=1000000
+        pre_min=min(m[n], key=m[n].get)
+    f.write(n+"\t"+pre_min+"\n")
+f.close()' > tree2pdf.py
 #########################################################
 chmod +x tree2pdf.py
 
 echo pdfing...
-echo 'if this shows cannot connect to X-server try connecting via "ssh -X"'
+echo  'if this shows cannot connect to X-server try connecting via "ssh -X"'
 for i in $TAXIDS
 do
 if [ -e "RAxML_bipartitions.${i}.raxml" ]
