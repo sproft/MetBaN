@@ -452,6 +452,7 @@ date
 
 mkdir -p pdfs
 mkdir -p nwk
+mkdir -p tables
 
 ###########CREATE TREE2PDF : DO NOT CHANGE###############
 echo '# -*- coding: utf-8 -*-
@@ -536,7 +537,7 @@ nstyleP["bgcolor"] = "pink"
 
 t = Tree(sys.argv[1])
 d = pickle.load(open( sys.argv[2], "rb"))
-all_env=[]
+all_env_nodes=[]
 
 #iterate through leaves only
 for n in t:
@@ -552,17 +553,18 @@ for n in t:
         count=n.name_splitted[0].split("count=")[1]
         n.set_style(nstyleG)
         n.add_face(TextFace(count),column=0,position="aligned")
-        all_env.append(n.name)
+        all_env_nodes.append(n.name)
 
 t.write(format=1, outfile="./nwk/"+sys.argv[1]+".nwk")
 t.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)
 
 #find the closest non environmental leave
 m=make_matrix(t)
-f=open("nwk/neighbour_result.tsv","w")
-for n in all_env:
+f=open("tables/"+sys.argv[1]+"_neighbour_result.tsv","w")
+f.write("Environmental Sequence\tClosest Database Sequence\n")
+for n in all_env_nodes:
     pre_min=min(m[n], key=m[n].get)
-    while pre_min in all_env:
+    while pre_min in all_env_nodes:
         m[n][pre_min]=1000000
         pre_min=min(m[n], key=m[n].get)
     f.write(n+"\t"+pre_min+"\n")
@@ -587,6 +589,7 @@ date
 cp -f $OUT/FILES/RESULTS/*.tab $OUT/clas.res.tab
 cp -rf $OUT/FILES/RESULTS/TREE/pdfs $OUT
 cp -rf $OUT/FILES/RESULTS/TREE/nwk $OUT
+cp -rf $OUT/FILES/RESULTS/TREE/tables $OUT
 
 
 if [ $DELETE -gt 0 ];then
