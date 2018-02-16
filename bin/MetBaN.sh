@@ -114,21 +114,19 @@ if [ $PAIRED -eq 0 ] ; then
    if [[ $# -ne 2 ]] ; then
       echo "arguments: FORWARD_READS REVERSE_READS"
       exit 1
-   #elif [ -s "$1" || -s "$2" ] ; then
-   #   echo "one of your read-files is empty"
-   #   exit 1
+   elif [[ ! -s $(get_abs_filename $1 ) ]] || [[ ! -s $(get_abs_filename $2 ) ]] ; then
+      echo "one of your read-files is empty"
+      exit 1
    fi
 else
    if [[ $# -ne 1 ]] ; then
       echo "arguments: PAIRED_READS"
       exit 1
-   #elif [ -s "$1" ] ; then
-   #   echo "your paired readfile is empty"
-   #   exit 1
+   elif [[ ! -s $(get_abs_filename $1 ) ]] ; then
+      echo "your paired readfile is empty"
+      exit 1
    fi
 fi
-
-
 
 #check for mandatory options
 if ! [[ -v TAXIDS ]]
@@ -589,7 +587,7 @@ do
 if [ -e "RAxML_bipartitions.${i}.raxml" ]
 then
 echo ${i}.pdf
-xvfb-run --auto-servernum python ./tree2pdf.py RAxML_bipartitions.${i}.raxml ${i}.mafft.coffee.dict.pkl 2>$LOG/$i.pdf.log &
+( python ./tree2pdf.py RAxML_bipartitions.${i}.raxml ${i}.mafft.coffee.dict.pkl 2>$LOG/$i.pdf.log ) || ( xvfb-run --auto-servernum python ./tree2pdf.py RAxML_bipartitions.${i}.raxml ${i}.mafft.coffee.dict.pkl 2>$LOG/$i.pdf.log ) &
 fi
 done
 wait
