@@ -186,6 +186,16 @@ exit 1
 fi
 
 
+for i in $TAXIDS
+do
+if ! [[ -f $(get_abs_filename $REFERENCE)/DIV4.final.fasta.${i} ]]
+then
+echo "there exists no reference file for the taxid: ${i}, please refer to the ecoPCR script" >&2
+exit 1
+fi
+done
+
+
 # check binaries
 PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
 for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-AVX2 xvfb-run python; do
@@ -213,8 +223,8 @@ fi
 rm -f -r $OUT/FILES
 mkdir -p $OUT/FILES
 mkdir -p $OUT/FILES/LOGS
-LOG=$(get_abs_filename $OUT/FILES/LOGS )
-
+#LOG=$(get_abs_filename $OUT/FILES/LOGS )
+LOG=$OUT/FILES/LOGS
 
 
 ##############PREPARING THE FILES
