@@ -86,7 +86,7 @@ Example:
 ## Installation
 
 Installation requirements:  
-Xvfb: Unfortunately has to be installed from an admin in order to create the pdf tree files.  
+Xvfb: Unfortunately needs to be installed from an admin in order to create the pdf tree files on a system without a display.  
 
 ```bash
 git clone https://github.com/sproft/MetBaN
