@@ -149,7 +149,7 @@ printf "lakesample      div4    g:g       ${1}   ${2}  F       @\n" >> ngsfilter
 printf "lakesample      div4    t:t       ${1}   ${2}  F       @" >> ngsfilter.txt
 ################DO NOT CHANGE##############
 
-$i>taxids
+$TAXIDS>taxids
 
 ecoPCR -d ${DATABASE}/embl_last -e $ERRORS -l $LLENGTH -L $ULENGTH $1 $2 >DIV4.ecoPCR
 
