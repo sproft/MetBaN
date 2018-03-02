@@ -195,7 +195,7 @@ done
 
 
 # check binaries
-PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
+PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
 for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-AVX2 python; do
     check_bin $bin;
 done;
@@ -345,7 +345,7 @@ date
 echo cleaning...
 for i in $TAXIDS
 do
-obiannotate --without-progress-bar -k count -k family_name -k scientific_name env.${i}.fasta > env.${i}.ann.FASTA 2>$LOG/$i.annotate.log &
+obiannotate --without-progress-bar -k count -k family_name -k scientific_name env.${i}.fasta > env.${i}.ann.fasta 2>$LOG/$i.annotate.log &
 done
 wait
 date
@@ -358,13 +358,13 @@ if [[ -v ANNOT ]]
 then
   for i in $TAXIDS
   do
-  cat env.${i}.ann.FASTA ${REFERENCE}/DIV4.final.fasta.${i} ${ANNOT}/*.${i} > ./TREE/${i}.FASTA 2>$LOG/$i.concat.log &
+  cat env.${i}.ann.fasta ${REFERENCE}/DIV4.final.fasta.${i} ${ANNOT}/*.${i} > ./TREE/${i}.fasta 2>$LOG/$i.concat.log &
   done
   wait
 else
   for i in $TAXIDS
   do
-  cat env.${i}.ann.FASTA ${REFERENCE}/DIV4.final.fasta.${i} > ./TREE/${i}.FASTA 2>$LOG/$i.concat.log &
+  cat env.${i}.ann.fasta ${REFERENCE}/DIV4.final.fasta.${i} > ./TREE/${i}.fasta 2>$LOG/$i.concat.log &
   done
   wait
 fi
@@ -377,9 +377,9 @@ cd TREE
 echo adding outgroup...
 for i in $TAXIDS
 do
-if [ -s "../env.${i}.ann.FASTA" ]
+if [ -s "../env.${i}.ann.fasta" ]
 then
-cat $OUTGROUP ${i}.FASTA > ${i}.fasta.outgroup 2>$LOG/$i.addoutgroup.log
+cat $OUTGROUP ${i}.fasta > ${i}.fasta.outgroup 2>$LOG/$i.addoutgroup.log
 fi
 done
 wait
