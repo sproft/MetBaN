@@ -22,12 +22,12 @@ obitools:
 	hash obigrep || $(MAKE) util/only_obitools
 
 util/mafft:
-        mkdir -p util
-        cd util && wget http://mafft.cbrc.jp/alignment/software/mafft-7.310-with-extensions-src.tgz 
-        cd util && tar xfvz mafft-*-with-extensions-src.tgz && rm mafft-*-with-extensions-src.tgz && mv mafft-*-with-extensions mafft
-        cd util/mafft && mkdir -p bin && sed -i -e 's?PREFIX = \/usr\/local?PREFIX = '`pwd`'?' core/Makefile
-        cd util/mafft && sed -i -e 's?PREFIX = \/usr\/local?PREFIX = '`pwd`'?' extensions/Makefile
-        cd util/mafft/core && make clean && make && make install
+	mkdir -p util
+	cd util && wget http://mafft.cbrc.jp/alignment/software/mafft-7.310-with-extensions-src.tgz 
+	cd util && tar xfvz mafft-*-with-extensions-src.tgz && rm mafft-*-with-extensions-src.tgz && mv mafft-*-with-extensions mafft
+	cd util/mafft && mkdir -p bin && sed -i -e 's?PREFIX = \/usr\/local?PREFIX = '`pwd`'?' core/Makefile
+	cd util/mafft && sed -i -e 's?PREFIX = \/usr\/local?PREFIX = '`pwd`'?' extensions/Makefile
+	cd util/mafft/core && make clean && make && make install
 
 util/tcoffee:
 	mkdir -p util
