@@ -452,7 +452,7 @@ for i in $TAXIDS
 do
 if [ -e "${i}.mafft.coffee.fasta" ]
 then
-( raxmlHPC-PTHREADS-AVX2 -T $THREADS -o Seq1 -f a -x 12345 -p 12345 -c 8 -# $BOOT -m GTRCAT -s ${i}.mafft.coffee.fasta -n ${i}.raxml 2>$LOG/$i.raxml.log ) || ( raxmlHPC-PTHREADS-AVX -T $THREADS -o Seq1 -f a -x 12345 -p 12345 -c 8 -# $BOOT -m GTRCAT -s ${i}.mafft.coffee.fasta -n ${i}.raxml 2>$LOG/$i.raxml.log ) || ( raxmlHPC-PTHREADS-SSE3 -T $THREADS -o Seq1 -f a -x 12345 -p 12345 -c 8 -# $BOOT -m GTRCAT -s ${i}.mafft.coffee.fasta -n ${i}.raxml 2>$LOG/$i.raxml.log ) || ( raxmlHPC-PTHREADS -T $THREADS -o Seq1 -f a -x 12345 -p 12345 -c 8 -# $BOOT -m GTRCAT -s ${i}.mafft.coffee.fasta -n ${i}.raxml 2>$LOG/$i.raxml.log ) &
+raxmlHPC-PTHREADS -T $THREADS -o Seq1 -f a -x 12354 -p 12354 -c 8 -# $BOOT -m GTRCAT -s ${i}.mafft.coffee.fasta -n ${i}.raxml 2>$LOG/$i.raxml.log &
 fi
 done
 wait
