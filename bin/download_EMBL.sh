@@ -1,13 +1,51 @@
 #!/bin/bash -e
 
+SCR=`basename $0`;
+# rel dir
+# DIR=`dirname $(readlink $0 || echo $0)`;
+# abs dir
+# # get absolute dir
+pushd . > /dev/null
+DIR="${BASH_SOURCE[0]}"
+while [ -h "$DIR" ]; do
+cd "$(dirname "$DIR")"
+DIR="$(readlink "$(basename "$DIR")")"
+done
+cd "$(dirname "$DIR")"
+DIR="$(pwd)/"
+popd > /dev/null
+
 UDIR=$DIR/../util/
 LDIR=$DIR/../lib/
 
+log(){
+echo [$(date +"%T")] $@ >&2
+}
+logs(){
+echo -n [$(date +"%T")] $@ >&2
+}
+loge(){
+echo " "$@ >&2
+}
+
+check_bin(){
+logs $1 ..
+if [[ $1 == */* ]]; then
+[ -x $1 ] || { loge failed; log "$1 not found or executable"; exit 1; }
+else
+hash $1 || { loge failed; log "$1 required in PATH"; exit 1; }
+fi;
+loge ok
+}
+
+
+
 # check binaries
 PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
-for bin in obiconvert; do
+for bin in obiconvert gunzip; do
     check_bin $bin;
 done;
+
 
 mkdir -p embl_last
 cd embl_last
