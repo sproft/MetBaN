@@ -39,6 +39,8 @@ util/raxml:
 	cd util && git clone https://github.com/stamatak/standard-RAxML.git
 	cd util/standard-RAxML && make -f Makefile.gcc && make -f Makefile.PTHREADS.gcc
 	cd util/standard-RAxML && make -f Makefile.AVX2.gcc && make -f Makefile.AVX2.PTHREADS.gcc
+	cd util/standard-RAxML && make -f Makefile.AVX.gcc && make -f Makefile.AVX.PTHREADS.gcc
+	cd util/standard-RAxML && make -f Makefile.SSE3.gcc && make -f Makefile.SSE3.PTHREADS.gcc
 
 util/miniconda:
 	mkdir -p util
