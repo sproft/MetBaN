@@ -41,7 +41,7 @@ loge ok
 
 
 # check binaries
-PATH=$UDIR/mafft/scripts:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
+PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
 for bin in obiconvert gunzip; do
     check_bin $bin;
 done;
