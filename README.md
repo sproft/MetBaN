@@ -37,7 +37,7 @@ For this we need to specify the Primers that were used for capturing the barcode
 
 Additionally we need to specify the path of the already converted database on which we would like to perform the inSilico PCR.  
 And finally we need to specify the list of taxids for which we would like to create annotated reference sequences that are later required for the tree building step.  
-You can find the taxids for your sepcies of interest here: https://www.ncbi.nlm.nih.gov/taxonomy   
+You can find the taxids for your species of interest here: https://www.ncbi.nlm.nih.gov/taxonomy   
 Usage:
 ```  
 ecoPCR_EMBL.sh FORWARD_PRIMER REVERSE_PRIMER  
@@ -93,13 +93,16 @@ Example:
 
 ## Installation
 
-Installation requirements:
+Installation requirements:   
 git: Install using your favourite package-manager (this will vary depending on the linux release you are using)  
 gcc: Install using your favourite package-manager  
 python-dev: Install using your favourite package-manager  
 Xvfb: Unfortunately needs to be installed from an admin in order to create the pdf tree files on a system without a display.  
-copy next lines   
-ignore warnings  
+
+
+For installation please copy the following lines into your terminal.  
+Some warnings might occur, you can check if your installation was succesfull by using the test script below.  
+
 
 ```bash
 git clone https://github.com/sproft/MetBaN
