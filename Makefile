@@ -13,7 +13,7 @@ clean:
 dependencies:
 	hash mafft || $(MAKE) util/mafft
 	hash t_coffee || $(MAKE) util/tcoffee
-	hash raxmlHPC || $(MAKE) util/raxml
+	hash raxmlHPC-PTHREADS || $(MAKE) util/raxml
 	hash conda ete3 || $(MAKE) util/miniconda
 	#hash vcfutils.pl || $(MAKE) util/bcftools
 	hash obigrep || $(MAKE) util/obitools
