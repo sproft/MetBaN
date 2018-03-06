@@ -1,4 +1,4 @@
-PATH := bin:util/mafft/bin:util/tcoffee/compile:util/standard-RAxML:util/anaconda_ete/bin:util/OBITools/bin:$(PATH)
+PATH := bin:util/mafft/bin:util/tcoffee/compile:util/standard-RAxML:util/anaconda_ete/bin:util/OBITools/bin:util/ecoPCR/src:$(PATH)
 
 .PHONY: all clean dependencies obitools
 
@@ -17,6 +17,7 @@ dependencies:
 	hash conda ete3 || $(MAKE) util/miniconda
 	#hash vcfutils.pl || $(MAKE) util/bcftools
 	hash obigrep || $(MAKE) util/obitools
+	hash ecoPCR || $(MAKE) util/ecoPCR
 
 obitools:
 	hash obigrep || $(MAKE) util/only_obitools
@@ -55,7 +56,13 @@ util/obitools:
 	cd util && wget http://metabarcoding.org/obitools/doc/_downloads/get-obitools.py
 	cd util && anaconda_ete/bin/python get-obitools.py && rm get-obitools.py && rm obitools && mkdir -p OBITools && mkdir -p OBITools/bin
 	cd util && cp OBITools-*/export/bin/* ./OBITools/bin
-	
+
+util/ecoPCR:
+	mkdir -p util
+	cd util && wget https://git.metabarcoding.org/obitools/ecopcr/uploads/6f37991b325c8c171df7e79e6ae8d080/ecopcr-0.8.0.tar.gz && tar -zxvf ecopcr-*.tar.gz
+	cd util/ecoPCR/src/ && make
+	cd util && rm ecopcr-0.8.0.tar.gz
+
 util/only_obitools:
 	mkdir -p util
 	cd util && wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O Miniconda-latest-Linux-x86_64.sh

@@ -54,6 +54,7 @@ cd embl_last
 mkdir -p EMBL
 cd EMBL
 wget -nH --cut-dirs=5 -A rel_std_\*.dat.gz -m ftp://ftp.ebi.ac.uk/pub/databases/embl/release/std/
+echo "unzipping files..."
 gunzip *.dat.gz
 cd ..
 
