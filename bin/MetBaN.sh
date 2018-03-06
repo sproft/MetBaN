@@ -195,7 +195,7 @@ done
 
 
 # check binaries
-PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
+PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$PATH;
 for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-PTHREADS python; do
     check_bin $bin;
 done;
@@ -475,6 +475,7 @@ Created on Wed Feb 24 15:59:18 2016
 import os
 import sys
 import argparse
+import ete3
 from itertools import combinations
 from ete3 import Tree
 
