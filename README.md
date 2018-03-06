@@ -19,6 +19,7 @@ download_EMBL.sh
 ecoPCR_EMBL.sh  
 MetBaN.sh (core script)  
 
+STEP 1:  
 download_EMBL.sh:  
 This script will download the latest release of the EMBL gene databank in conjunction with the latest release of the taxonomical information coming from NCBI.  
 The script will then convert the database into a format that can be used by ObiTools.  
@@ -29,26 +30,33 @@ Usage:
 “-A rel_std_\*.dat.gz” accordingly  
 •	The folder “EMBL” can safely be deleted after successful conversion of the EMBL database into a format that can be used by ObiTools  
 
+STEP 2:  
 ecoPCR_EMBL.sh:  
 This script prepares a reference database in order to successfully identify the taxon of sequences that were collected from the environment.  
 For this we need to specify the Primers that were used for capturing the barcodes.  
 
 Additionally we need to specify the path of the already converted database on which we would like to perform the inSilico PCR.  
 And finally we need to specify the list of taxids for which we would like to create annotated reference sequences that are later required for the tree building step.  
+You can find the taxids for your sepcies of interest here: https://www.ncbi.nlm.nih.gov/taxonomy   
 Usage:
 ```  
 ecoPCR_EMBL.sh FORWARD_PRIMER REVERSE_PRIMER  
 Generate reference database for the identification using ecoPCR  
   -i   list of taxids (mandatory)  
   -d   path to converted database directory (mandatory)  
-  -e   number of allowed errors [$ERRORS]  
-  -o   output directory [$OUT]  
-  -l   lower read length cutoff [$LLENGTH]  
-  -L   upper read length cutoff [$ULENGTH]  
+  -e   number of allowed errors [3]  
+  -o   output directory [ecoPCR_database$DATE]  
+  -l   lower read length cutoff [100]  
+  -L   upper read length cutoff [500]  
   -V   show script version  
   -h   show this help  
 ```
 
+Example:
+`./ecoPCR_EMBL.sh GCGGTAATTCCAGCTCCAATAG CTCTGACAATGGAATACGAATA -i "33836 33849 33853" -d embl_last/`
+
+
+STEP 3:  
 MetBaN.sh:  
 This script is the core of the pipeline.  
 The main input are the fastq files of the forward and reverse read of the environmental sequences that are to have their taxids identified by ObiTools.  
@@ -69,11 +77,11 @@ Generate identification and phylogenetic tress for environmental reads
 -d   path to EMBL database directory (mandatory)
 -r   path to reference database directory (mandatory)
 -a   annotated sequences for the tree building
--o   output directory [$OUT]
--m   match cutoff [$MATCH]
--t   number of threads / parallel processes [$THREADS]
--l   read length cutoff [$LENGTH]
--b   number of bootstrap runs in the tree building process [$BOOT]
+-o   output directory [phylogenetic-trees$DATE]
+-m   match cutoff [0.9]
+-t   number of threads / parallel processes [2]
+-l   read length cutoff [150]
+-b   number of bootstrap runs in the tree building process [100]
 -P   run pipeline with already paired reads
 -D   delete intermediate files
 -V   show script version
@@ -85,8 +93,13 @@ Example:
 
 ## Installation
 
-Installation requirements:  
+Installation requirements:
+git: Install using your favourite package-manager (this will vary depending on the linux release you are using)  
+gcc: Install using your favourite package-manager  
+python-dev: Install using your favourite package-manager  
 Xvfb: Unfortunately needs to be installed from an admin in order to create the pdf tree files on a system without a display.  
+copy next lines   
+ignore warnings  
 
 ```bash
 git clone https://github.com/sproft/MetBaN
