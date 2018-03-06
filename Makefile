@@ -47,6 +47,7 @@ util/miniconda:
 	cd util && wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O Miniconda-latest-Linux-x86_64.sh
 	cd util && bash Miniconda-latest-Linux-x86_64.sh -b -p anaconda_ete/ && rm Miniconda-latest-Linux-x86_64.sh
 	cd util/anaconda_ete/bin && ./conda install -y -c etetoolkit ete3 ete3_external_apps 
+	cd util/anaconda_ete/bin && ./pip install ete3
 	#&& ./conda install -y -c conda-forge xvfbwrapper
 
 util/obitools:
