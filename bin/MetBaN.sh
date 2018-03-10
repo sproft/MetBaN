@@ -265,11 +265,11 @@ if [ $PAIRED -eq 0 ];then
 
 else
   fileP="$1"
-  cd $OUT/FILES
   
   #demultiplexing
   echo demultiplexing...
-  ngsfilter --without-progress-bar -t ${REFERENCE}/ngsfilter.txt -u unidentified.paired.fastq $fileP > paired.ali.assigned.fastq 2>$LOG/ngsfilter.log
+  ngsfilter --without-progress-bar -t ${REFERENCE}/ngsfilter.txt -u $OUT/FILES/unidentified.paired.fastq $(get_abs_filename $fileP ) > $OUT/FILES/paired.ali.assigned.fastq 2>$LOG/ngsfilter.log
+  cd $OUT/FILES
   date
 fi
 
