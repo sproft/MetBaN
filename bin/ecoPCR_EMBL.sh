@@ -76,7 +76,7 @@ eval set -- "$ARGS"
 
 OUT='ecoPCR_database'`date +%F`
 LLENGTH=100
-ULENGTH=500
+ULENGTH=1000
 ERRORS=3
 
 while true; do
