@@ -298,7 +298,7 @@ date
 
 echo filtering...
 #filter useless reads
-obigrep --without-progress-bar -l $LENGTH -p 'count>=$COUNT' paired.ali.assigned.uniq.ann.fasta > paired.ali.assigned.uniq.ann.fil.fasta 2>$LOG/grep2.log
+obigrep --without-progress-bar -l $LENGTH -p "count>=$COUNT" paired.ali.assigned.uniq.ann.fasta > paired.ali.assigned.uniq.ann.fil.fasta 2>$LOG/grep2.log
 date
 
 echo "finding head reads..."
@@ -573,13 +573,14 @@ t.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)
 #find the closest non environmental leave
 m=make_matrix(t)
 f=open("tables/"+sys.argv[1]+"_neighbour_result.tsv","w")
-f.write("Environmental Sequence\tClosest Database Sequence\n")
+f.write("Environmental Sequence\tClosest Database Sequence\tBootstrap Support\tDistance\n")
 for n in all_env_nodes:
     pre_min=min(m[n], key=m[n].get)
     while pre_min in all_env_nodes:
         m[n][pre_min]=1000000
         pre_min=min(m[n], key=m[n].get)
-    f.write(n+"\t"+pre_min+"\n")
+    ancestor = t.get_common_ancestor(n, pre_min)
+    f.write(n+"\t"+pre_min+"\t"+str(ancestor.support)+"\t"+str(m[n][pre_min])+"\n")
 f.close()' > tree2pdf.py
 #########################################################
 chmod +x tree2pdf.py
