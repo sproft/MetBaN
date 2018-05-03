@@ -20,6 +20,7 @@ environmental reads
 -a   annotated sequences for the tree building
 -o   output directory [$OUT]
 -m   match cutoff [$MATCH]
+-c   keep only reads that appear at least this amount of times [$COUNT] 
 -t   number of threads / parallel processes [$THREADS]
 -l   read length cutoff [$LENGTH]
 -b   number of bootstrap runs in the tree building process [$BOOT]
@@ -76,7 +77,7 @@ loge ok
 }
 
 # Execute getopt and check opts/args
-ARGS=`getopt -n "$SCR" -o "t:a:g:i:o:l:m:d:r:b:PDhV" -- "$@"`
+ARGS=`getopt -n "$SCR" -o "t:a:g:i:o:l:m:c:d:r:b:PDhV" -- "$@"`
 [ $? -ne 0 ] && exit 1; # Bad arguments
 eval set -- "$ARGS"
 
@@ -87,6 +88,7 @@ MATCH=0.9
 DELETE=0
 PAIRED=0
 BOOT=100
+COUNT=2
 
 while true; do
 case "$1" in
@@ -95,6 +97,7 @@ case "$1" in
 -o) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); OUT="$2"; shift 2;;
 -l) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); LENGTH="$2"; shift 2;;
 -m) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); MATCH="$2"; shift 2;;
+-c) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); COUNT="$2"; shift 2;;
 -g) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); OUTGROUP="$2"; shift 2;;
 -b) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); BOOT="$2"; shift 2;;
 -d) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); DATABASE="$2"; shift 2;;
@@ -295,7 +298,7 @@ date
 
 echo filtering...
 #filter useless reads
-obigrep --without-progress-bar -l $LENGTH -p 'count>=2' paired.ali.assigned.uniq.ann.fasta > paired.ali.assigned.uniq.ann.fil.fasta 2>$LOG/grep2.log
+obigrep --without-progress-bar -l $LENGTH -p "count>=$COUNT" paired.ali.assigned.uniq.ann.fasta > paired.ali.assigned.uniq.ann.fil.fasta 2>$LOG/grep2.log
 date
 
 echo "finding head reads..."
@@ -570,13 +573,14 @@ t.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)
 #find the closest non environmental leave
 m=make_matrix(t)
 f=open("tables/"+sys.argv[1]+"_neighbour_result.tsv","w")
-f.write("Environmental Sequence\tClosest Database Sequence\n")
+f.write("Environmental Sequence\tClosest Database Sequence\tBootstrap Support\tDistance\n")
 for n in all_env_nodes:
     pre_min=min(m[n], key=m[n].get)
     while pre_min in all_env_nodes:
         m[n][pre_min]=1000000
         pre_min=min(m[n], key=m[n].get)
-    f.write(n+"\t"+pre_min+"\n")
+    ancestor = t.get_common_ancestor(n, pre_min)
+    f.write(n+"\t"+pre_min+"\t"+str(ancestor.support)+"\t"+str(m[n][pre_min])+"\n")
 f.close()' > tree2pdf.py
 #########################################################
 chmod +x tree2pdf.py

@@ -14,6 +14,7 @@ Usage:
 Generate reference database for the identification using ecoPCR
   -i   list of taxids (mandatory)
   -d   path to converted EMBL database (mandatory)
+  -a   path to optional annotated database for species identification
   -e   number of allowed errors [$ERRORS]
   -o   output directory [$OUT]
   -l   lower read length cutoff [$LLENGTH]
@@ -70,7 +71,7 @@ check_bin(){
 
 
 # Execute getopt and check opts/args
-ARGS=`getopt -n "$SCR" -o "d:e:i:o:l:L:hV" -- "$@"`
+ARGS=`getopt -n "$SCR" -o "d:a:e:i:o:l:L:hV" -- "$@"`
 [ $? -ne 0 ] && exit 1; # Bad arguments
 eval set -- "$ARGS"
 
@@ -87,6 +88,7 @@ while true; do
         -l) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); LLENGTH="$2"; shift 2;;
         -L) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); ULENGTH="$2"; shift 2;;
         -d) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); DATABASE="$2"; shift 2;;
+        -a) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); ANNOT="$2"; shift 2;;
         #-z) GZIP=1; shift 1;;
         -h) usage && exit 0;;
         -V) echo $VERSION && exit 0;;
@@ -121,6 +123,11 @@ then
     exit 1
 fi
 
+if ! [[ -d $(get_abs_filename $ANNOT) ]] && [[ -v ANNOT ]]
+then
+echo "the annotated database directory does not exist" >&2
+exit 1
+fi
 
 
 # check binaries
@@ -135,6 +142,10 @@ done;
 hostname
 date
 
+if [[ -v ANNOT ]]
+then
+ANNOT=$(get_abs_filename $ANNOT )
+fi
 
 DATABASE=$(get_abs_filename $DATABASE )
 mkdir -p $OUT
@@ -164,6 +175,12 @@ obiannotate --uniq-id DIV4.ecopcr.uniq.clean >DIV4.ecopcr.uniq.clean.annot
 cat DIV4.ecopcr.uniq.clean.annot | perl -ne 'if ($_ =~ m/species\=(\d+)/smg) {print "amplicon\t$1\n"}' | sort | uniq >DIV4.ecopcr.uniq.clean.annot.species.list
 
 obigrep -v -a "genus_name:###" DIV4.ecopcr.uniq.clean.annot > DIV4.fasta
+
+if [[ -v ANNOT ]]
+then
+cp DIV4.fasta DIV4.noANNOT.fasta
+cat DIV4.noANNOT.fasta $ANNOT > DIV4.fasta
+fi 
 
 for i in $TAXIDS
 do
