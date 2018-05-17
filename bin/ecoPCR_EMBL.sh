@@ -131,7 +131,7 @@ fi
 
 
 # check binaries
-PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
+PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$PATH;
 for bin in obigrep obiuniq obiannotate ecoPCR python perl; do
     check_bin $bin;
 done;
