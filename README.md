@@ -89,7 +89,7 @@ Generate identification and phylogenetic tress for environmental reads
 ```
 
 Example:  
-`./MetBaN.sh 1_S1_L001_R1_001.fastq 1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ../data/outgroup/Bolidomonas_outgroup.fas -r ecoPCR_database2017-05-15 -d download_EMBL/ -o long_test`
+`./MetBaN.sh 1_S1_L001_R1_001.fastq 1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ../data/outgroup/Bolidomonas_outgroup.fas -r ecoPCR_database2017-05-15 -d embl_last/ -o long_test`
 
 ## Installation
 
