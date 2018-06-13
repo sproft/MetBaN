@@ -198,6 +198,6 @@ date
 #prepare header for tree
 for i in $TAXIDS
 do
-cat DIV4.ann.fasta.${i} | perl -pe 's/; count=/; REFERENCE; count=/g' > DIV4.final.fasta.${i}
+cat DIV4.ann.fasta.${i} | perl -pe 's/ count=/; REFERENCE; count=/g' > DIV4.final.fasta.${i}
 done
 date
