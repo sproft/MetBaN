@@ -391,6 +391,7 @@ date
 ###########################BUILDING TREE
 
 #MAFFT Alignment
+unset MAFFT_BINARIES
 echo aligning...
 for i in $TAXIDS
 do
