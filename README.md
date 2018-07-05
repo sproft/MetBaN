@@ -22,7 +22,7 @@ MetBaN.sh (core script)
 STEP 1:  
 download_EMBL.sh:  
 This script will download the latest release of the EMBL gene databank in conjunction with the latest release of the taxonomical information coming from NCBI.  
-The script will then convert the database into a format that can be used by ObiTools.  
+The script will then convert the database into a format that can be used by ObiTools.   
 Usage:  
 •	drop the script in the folder you wish to download the gene bank into  
 •	run using bash (requires around 271G) `./download_EMBL.sh`  
@@ -54,7 +54,7 @@ Generate reference database for the identification using ecoPCR
 ```
 
 Example:
-`./ecoPCR_EMBL.sh GCGGTAATTCCAGCTCCAATAG CTCTGACAATGGAATACGAATA -i "33836 33849 33853" -d embl_last/` 
+`./ecoPCR_EMBL.sh GCGGTAATTCCAGCTCCAATAG CTCTGACAATGGAATACGAATA -i "33836 33849 33853" -d embl_last/`  
 The Nucleotide ambiguity code (IUPAC) is supported, if you want to specify several primers.
 
 STEP 3:  
