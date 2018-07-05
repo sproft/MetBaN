@@ -22,7 +22,7 @@ MetBaN.sh (core script)
 STEP 1:  
 download_EMBL.sh:  
 This script will download the latest release of the EMBL gene databank in conjunction with the latest release of the taxonomical information coming from NCBI.  
-The script will then convert the database into a format that can be used by ObiTools.  
+The script will then convert the database into a format that can be used by ObiTools.   
 Usage:  
 •	drop the script in the folder you wish to download the gene bank into  
 •	run using bash (requires around 271G) `./download_EMBL.sh`  
@@ -33,7 +33,8 @@ Usage:
 STEP 2:  
 ecoPCR_EMBL.sh:  
 This script prepares a reference database in order to successfully identify the taxon of sequences that were collected from the environment.  
-For this we need to specify the Primers that were used for capturing the barcodes.  
+For this we need to specify the primers that were used for capturing the barcodes.  
+If several primers were used it is possible to specify ambiguous bases in order to cover all of them. 
 
 Additionally we need to specify the path of the already converted database on which we would like to perform the inSilico PCR.  
 And finally we need to specify the list of taxids for which we would like to create annotated reference sequences that are later required for the tree building step.  
@@ -53,8 +54,8 @@ Generate reference database for the identification using ecoPCR
 ```
 
 Example:
-`./ecoPCR_EMBL.sh GCGGTAATTCCAGCTCCAATAG CTCTGACAATGGAATACGAATA -i "33836 33849 33853" -d embl_last/`
-
+`./ecoPCR_EMBL.sh GCGGTAATTCCAGCTCCAATAG CTCTGACAATGGAATACGAATA -i "33836 33849 33853" -d embl_last/`  
+The Nucleotide ambiguity code (IUPAC) is supported, if you want to specify several primers.
 
 STEP 3:  
 MetBaN.sh:  
