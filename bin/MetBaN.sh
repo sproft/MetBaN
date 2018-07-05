@@ -408,7 +408,7 @@ for i in $TAXIDS
 do
 if [ -e "${i}.mafft" ]
 then
-t_coffee -other_pg seq_reformat -in ${i}.mafft -out ${i}.mafft.coffee -action +rm_gap 75 2>$LOG/$i.t_coffee.log &
+t_coffee -other_pg seq_reformat -in ${i}.mafft -out ${i}.mafft.coffee -action +rm_gap 75 > $LOG/$i.t_coffee.log &
 fi
 done
 wait
@@ -550,6 +550,7 @@ nstyleP["bgcolor"] = "pink"
 t = Tree(sys.argv[1])
 d = pickle.load(open( sys.argv[2], "rb"))
 all_env_nodes=[]
+counts={}
 
 #iterate through leaves only
 for n in t:
@@ -563,25 +564,26 @@ for n in t:
         n.name_splitted=n.name.split(";")
         n.name=n.name_splitted[2].split("scientific_name=")[1]+" "+n.name_splitted[0].split("-")[1].split("_CONS_SUB_SUB")[0]
         count=n.name_splitted[0].split("count=")[1]
+	counts[n.name]=count
         n.set_style(nstyleG)
         n.add_face(TextFace(count),column=0,position="aligned")
         all_env_nodes.append(n.name)
 
-t.write(format=1, outfile="./nwk/"+sys.argv[1]+".nwk")
-t.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)
-
 #find the closest non environmental leave
 m=make_matrix(t)
 f=open("tables/"+sys.argv[1]+"_neighbour_result.tsv","w")
-f.write("Environmental Sequence\tClosest Database Sequence\tBootstrap Support\tDistance\n")
+f.write("Environmental Sequence\tClosest Database Sequence\tCount\tDistance\n")
 for n in all_env_nodes:
     pre_min=min(m[n], key=m[n].get)
     while pre_min in all_env_nodes:
         m[n][pre_min]=1000000
         pre_min=min(m[n], key=m[n].get)
-    ancestor = t.get_common_ancestor(n, pre_min)
-    f.write(n+"\t"+pre_min+"\t"+str(ancestor.support)+"\t"+str(m[n][pre_min])+"\n")
-f.close()' > tree2pdf.py
+#    ancestor = t.get_common_ancestor(n, pre_min)
+    f.write(n+"\t"+pre_min+"\t"+str(counts[n])+"\t"+str(m[n][pre_min])+"\n")
+f.close()
+
+t.write(format=1, outfile="./nwk/"+sys.argv[1]+".nwk")
+t.render("./pdfs/"+sys.argv[1]+".pdf", w=183, units="mm",tree_style=ts)' > tree2pdf.py
 #########################################################
 chmod +x tree2pdf.py
 
