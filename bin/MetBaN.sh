@@ -602,7 +602,7 @@ wait
 date
 
 
-cp -f $OUT/FILES/RESULTS/*.tab $OUT/clas.res.tab
+cp -f $OUT/FILES/RESULTS/*.tab $OUT/classification.result.tsv
 cp -rf $OUT/FILES/RESULTS/TREE/pdfs $OUT
 cp -rf $OUT/FILES/RESULTS/TREE/nwk $OUT
 cp -rf $OUT/FILES/RESULTS/TREE/tables $OUT
