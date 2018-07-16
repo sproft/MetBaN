@@ -31,7 +31,7 @@ def writeToAll(IFiles,OFile):
         	while l:
                 	if l.startswith('@'):
 				OFile.write(l)
-                        	OFile.write(intToTag(i)+f.readline())
+                        	OFile.write(intToTag(i+1)+f.readline())
                         	OFile.write(f.readline())
                         	OFile.write("K"*numBases+f.readline())
                 	l=f.readline()
@@ -42,7 +42,7 @@ def writeFilter(IFiles,FPrimer,RPrimer):
 	Fngs=open('ngsfilter.txt','w')
 	Fngs.write('#exp\tsample\ttags\tforwardprimer\treverseprimer\n')
 	for i in range(0,len(IFiles)):
-		Fngs.write('sample\t'+os.path.basename(IFiles[i])+'\t'+intToTag(i)+':'+intToTag(i)+'\t'+FPrimer+'\t'+RPrimer+'\n')
+		Fngs.write('sample\t'+os.path.basename(IFiles[i])+'\t'+intToTag(i+1)+':'+intToTag(i+1)+'\t'+FPrimer+'\t'+RPrimer+'\n')
 	Fngs.close()
 
 
