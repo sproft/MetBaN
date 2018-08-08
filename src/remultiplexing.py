@@ -19,10 +19,11 @@ args = parser.parse_args()
 
 
 def intToTag(i):
-	ba=np.base_repr(i,4,padding=numBases-1)
+	ba=np.base_repr(i+1,4,padding=numBases-1)
         ba=np.array(list(ba[-numBases:]))
-        tag=np.select([ba=='0',ba=='1',ba=='2',ba=='3'],['A','C','G','T']).tostring()
-	return tag
+        tag=np.select([ba=='0',ba=='1',ba=='2',ba=='3'],['A','C','G','T'])
+        tag=''.join(str(x) for x in tag)
+        return tag
 
 def writeToAll(IFiles,OFile):
 	for i in range(0,len(IFiles)):
