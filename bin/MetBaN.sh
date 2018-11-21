@@ -242,8 +242,10 @@ if [ $PAIRED -eq 0 ];then
 
   rm -rf $OUT/FILES/paired_temp
   mkdir -p $OUT/FILES/paired_temp
-  cat $(get_abs_filename $fileF ) | split - -l 8000 $OUT/FILES/paired_temp/R1
-  cat $(get_abs_filename $fileR ) | split - -l 8000 $OUT/FILES/paired_temp/R2
+  len="$(wc -l <"$fileF")"
+  lines=$(( ($len / 4  + 1 ) / $THREADS * 4))
+  cat $(get_abs_filename $fileF ) | split - -l $lines $OUT/FILES/paired_temp/R1
+  cat $(get_abs_filename $fileR ) | split - -l $lines $OUT/FILES/paired_temp/R2
   cd $OUT/FILES/paired_temp
   paste <(ls ./R1*) <(ls ./R2*) > files
   while read -r F R
