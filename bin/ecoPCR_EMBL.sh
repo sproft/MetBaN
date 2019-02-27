@@ -15,7 +15,7 @@ Generate reference database for the identification using ecoPCR
   -i   list of taxids (mandatory)
   -d   path to converted EMBL database (mandatory)
   -a   path to optional annotated database for species identification
-  -e   number of allowed errors [$ERRORS]
+  -e   number of allowed errors during the primermatching [$ERRORS]
   -o   output directory [$OUT]
   -l   lower read length cutoff [$LLENGTH]
   -L   uper read length cutoff [$ULENGTH]

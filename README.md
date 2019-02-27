@@ -71,7 +71,7 @@ These trees can be found in the folder labeled pdfs.
 Additional information about the identified sequences can be found in a the provided result file.  
 Usage:  
 ```
-obiall.sh FORWARD_READ.fq REVERSE_READ.fq  
+MetBaN.sh FORWARD_READ.fq REVERSE_READ.fq  
 Generate identification and phylogenetic tress for environmental reads  
 -i   list of taxids (mandatory)
 -g   path to the fasta that contains a single outgroup sequence (mandatory)
