@@ -82,7 +82,7 @@ Generate identification and phylogenetic tress for environmental reads
 -m   match cutoff [0.9]
 -t   number of threads / parallel processes [2]
 -l   read length cutoff [150]
--b   number of bootstrap runs in the tree building process [100]
+-b   number of bootstrap runs in the tree building process [1000]
 -P   run pipeline with already paired reads
 -D   delete intermediate files
 -V   show script version
