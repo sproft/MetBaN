@@ -83,11 +83,11 @@ eval set -- "$ARGS"
 
 THREADS=2
 OUT='phylogenetic-trees'`date +%F`
-LENGTH=150
+LENGTH=100
 MATCH=0.9
 DELETE=0
 PAIRED=0
-BOOT=100
+BOOT=10000
 COUNT=2
 
 while true; do
@@ -321,7 +321,7 @@ cd RESULTS
 
 echo cleaning...
 #clean the header
-obiannotate --without-progress-bar --delete-tag=scientific_name_by_db --delete-tag=obiclean_samplecount --delete-tag=obiclean_count --delete-tag=obiclean_singletoncount --delete-tag=obiclean_internalcount --delete-tag=obiclean_head --delete-tag=taxid_by_db --delete-tag=obiclean_headcount --delete-tag=id_status --delete-tag=rank_by_db --delete-tag=order_name --delete-tag=order paired.ali.assigned.uniq.ann.fil.clean.tag.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.fasta 2>$LOG/annotate2.log
+obiannotate --without-progress-bar --delete-tag=obiclean_status --delete-tag=scientific_name_by_db --delete-tag=obiclean_samplecount --delete-tag=obiclean_count --delete-tag=obiclean_singletoncount --delete-tag=obiclean_cluster --delete-tag=obiclean_internalcount --delete-tag=obiclean_head --delete-tag=taxid_by_db --delete-tag=obiclean_headcount --delete-tag=id_status --delete-tag=rank_by_db --delete-tag=order_name --delete-tag=order paired.ali.assigned.uniq.ann.fil.clean.tag.fasta > paired.ali.assigned.uniq.ann.fil.clean.tag.ann.fasta 2>$LOG/annotate2.log
 date
 
 echo sorting...
@@ -418,7 +418,7 @@ wait
 date
 
 #########CREATE TRANS : DO NOT CHANGE ANYTHING!############
-echo '################CONVERT SEQ NAMES
+printf '################CONVERT SEQ NAMES
 import pickle,sys
 
 d = dict()
@@ -558,7 +558,7 @@ counts={}
 #iterate through leaves only
 for n in t:
     n.add_features(env=False,old_name=n.name)
-    n.name=d[n.name]
+    n.name=d[n.name].rstrip()
     if " REFERENCE; count=" in n.name:
         n.name=n.name.split(";")[3].split("scientific_name=")[1]+" "+n.name.split(";")[0]
         n.set_style(nstyleY)
