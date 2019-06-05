@@ -66,7 +66,10 @@ As input it requires the path to both the converted database and the created ref
 For the tree building process we additionally require an outgroup sequence that has a reasonable phylogenetic distance to the group that is to be analyzed.  
 The script will return a number of pdfs, which is at most the number of specified taxids (can be less when there exist no sequences belonging to a taxa in the fastq files).
 These are not to be taken as phylogenetic relations, but as a tool to check whether sequences that were identified to belong to a certain taxa are also sorted in the same group in the tree.  
-These trees can be found in the folder labeled pdfs.
+These trees can be found in the folder labeled pdfs and in the folder nwk saved in the newick format.  
+Additional outputs can be found in the folder tables. These tables contain a list of all query sequences and their closest phylogenic neighbor as calculated by the phylogentic tree.  
+
+The pipeline can either be run with either paired or unpaired reads and/or with demutiplexed or undemultiplex samples. Which input is being used can be set with the options -P and -R respectively.  
 
 Additional information about the identified sequences can be found in a the provided result file.  
 Usage:  
@@ -84,6 +87,7 @@ Generate identification and phylogenetic tress for environmental reads
 -l   read length cutoff [150]
 -b   number of bootstrap runs in the tree building process [1000]
 -P   run pipeline with already paired reads
+-R   run pipeline in remultiplexing mode to remultiplex already demultiplexed samples
 -D   delete intermediate files
 -V   show script version
 -h   show this help  
