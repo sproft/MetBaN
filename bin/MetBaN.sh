@@ -5,7 +5,7 @@
 
 # TODO: make nicer
 
-VERSION=0.0.1
+VERSION=1.1.0
 
 usage(){
 cat <<EOF
@@ -25,6 +25,7 @@ environmental reads
 -l   read length cutoff [$LENGTH]
 -b   number of bootstrap runs in the tree building process [$BOOT]
 -P   run pipeline with already paired reads
+-R   run pipeline in remultiplexing mode to remultiplex already demultiplexed samples
 -D   delete intermediate files
 -V   show script version
 -h   show this help
@@ -77,7 +78,7 @@ loge ok
 }
 
 # Execute getopt and check opts/args
-ARGS=`getopt -n "$SCR" -o "t:a:g:i:o:l:m:c:d:r:b:PDhV" -- "$@"`
+ARGS=`getopt -n "$SCR" -o "t:a:g:i:o:l:m:c:d:r:b:zRPDhV" -- "$@"`
 [ $? -ne 0 ] && exit 1; # Bad arguments
 eval set -- "$ARGS"
 
@@ -87,7 +88,8 @@ LENGTH=100
 MATCH=0.9
 DELETE=0
 PAIRED=0
-BOOT=10000
+DEMULTIPLEX=0
+BOOT=1000
 COUNT=2
 
 while true; do
@@ -103,7 +105,8 @@ case "$1" in
 -d) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); DATABASE="$2"; shift 2;;
 -r) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); REFERENCE="$2"; shift 2;;
 -a) [ ! -n "$2" ] && (echo "$1: value required" 1>&2 && exit 1); ANNOT="$2"; shift 2;;
-#-z) GZIP=1; shift 1;;
+-z) GZIP=1; shift 1;;
+-R) DEMULTIPLEX=1; shift 1;;
 -D) DELETE=1; shift 1;;
 -P) PAIRED=1; shift 1;;
 -h) usage && exit 0;;
@@ -112,23 +115,57 @@ case "$1" in
 esac
 done;
 
+
+# check binaries
+PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$PATH;
+for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-PTHREADS python; do
+    check_bin $bin;
+done;
+
+#[ $GZIP -gt 0 ] && check_bin gzip;
+
+
+#run check remutiplex input when demultiplexed
+if [ $DEMULTIPLEX -eq 1 ] ; then
+echo "MetBaN is running in remultiplex mode"
+#check for forward and reverse read
+if [ $PAIRED -eq 0 ] ; then
+   if [[ $# -ne 4 ]] ; then
+      echo "arguments: LIST_OF_FORWARD_READS LIST_OF_REVERSE_READS FORWARD_PRIMER REVERSE_PRIMER" >&2
+      exit 1
+   elif [[ ! -s $(get_abs_filename $1 ) ]] || [[ ! -s $(get_abs_filename $2 ) ]] ; then
+      echo "one of your read-files is empty" >&2
+      exit 1
+   fi
+else
+   if [[ $# -ne 3 ]] ; then
+      echo "arguments: LIST_OF_PAIRED_READS FORWARD_PRIMER REVERSE_PRIMER" >&2
+      exit 1
+   elif [[ ! -s $(get_abs_filename $1 ) ]] ; then
+      echo "your paired readfile is empty" >&2
+      exit 1
+   fi
+fi
+
+else
 #check for forward and reverse read
 if [ $PAIRED -eq 0 ] ; then
    if [[ $# -ne 2 ]] ; then
-      echo "arguments: FORWARD_READS REVERSE_READS"
+      echo "arguments: FORWARD_READS REVERSE_READS" >&2
       exit 1
    elif [[ ! -s $(get_abs_filename $1 ) ]] || [[ ! -s $(get_abs_filename $2 ) ]] ; then
-      echo "one of your read-files is empty"
+      echo "one of your read-files is empty" >&2
       exit 1
    fi
 else
    if [[ $# -ne 1 ]] ; then
-      echo "arguments: PAIRED_READS"
+      echo "arguments: PAIRED_READS" >&2
       exit 1
    elif [[ ! -s $(get_abs_filename $1 ) ]] ; then
-      echo "your paired readfile is empty"
+      echo "your paired readfile is empty" >&2
       exit 1
    fi
+fi
 fi
 
 #check for mandatory options
@@ -196,17 +233,14 @@ exit 1
 fi
 done
 
-
-# check binaries
-PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$PATH;
-for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-PTHREADS python; do
-    check_bin $bin;
-done;
-
-#[ $GZIP -gt 0 ] && check_bin gzip;
-
-# output
-#mkdir $OUT
+for i in $TAXIDS
+do
+if ! [[ -f $(get_abs_filename $ANNOT/*.${i}) ]] && [[ -v ANNOT ]]
+then
+echo "there exists no annotated database file for the taxid: ${i}, please make sure the files ends with .${i} and exists in the folder $ANNOT" >&2
+exit 1
+fi
+done
 
 hostname
 date
@@ -224,16 +258,39 @@ fi
 rm -f -r $OUT/FILES
 mkdir -p $OUT/FILES
 mkdir -p $OUT/FILES/LOGS
-#LOG=$(get_abs_filename $OUT/FILES/LOGS )
 LOG=$OUT/FILES/LOGS
 
 
 ##############PREPARING THE FILES
 
-
-if [ $PAIRED -eq 0 ];then
+#running remultiplexing if neccessary
+if [ $DEMULTIPLEX -eq 1 ] ; then
+ echo "remultiplexing..."
+ date
+ if [ $PAIRED -eq 0 ];then
+  python $DIR../src/remultiplexing.py $3 $4 $1 $2
+  mv $REFERENCE/ngsfilter.txt $REFERENCE/ngsfilter_old.txt
+  mv $(get_abs_filename ngsfilter.txt ) $REFERENCE/ngsfilter.txt
+  fileF="all.R1.fastq"
+  fileR="all.R2.fastq"
+ else
+  python $DIR../src/remultiplexing.py $2 $3 $1 --paired
+  mv $REFERENCE/ngsfilter.txt $REFERENCE/ngsfilter_old.txt
+  mv $(get_abs_filename ngsfilter.txt ) $REFERENCE/ngsfilter.txt
+  fileP="all.fastq"
+ fi
+else
+ if [ $PAIRED -eq 0 ];then
   fileF="$1"
   fileR="$2"
+ else
+  fileP="$1"
+ fi
+fi
+
+if [ $PAIRED -eq 0 ];then
+#  fileF="$1"
+#  fileR="$2"
 
   echo pairing...
   #pair the forward and backward read
@@ -269,7 +326,6 @@ if [ $PAIRED -eq 0 ];then
   date
 
 else
-  fileP="$1"
   
   #demultiplexing
   echo demultiplexing...
