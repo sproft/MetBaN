@@ -15,23 +15,45 @@ This pipeline uses a combination of searching for the species via the EMBL datab
 ## Usage
 
 The pipeline consists of three scripts:  
-download_EMBL.sh  
-ecoPCR_EMBL.sh  
-MetBaN.sh (core script)  
+download_EMBL  
+ecoPCR_EMBL  
+MetBaN (core script)  
 
 STEP 1:  
-download_EMBL.sh:  
+download_EMBL:  
 This script will download the latest release of the EMBL gene databank in conjunction with the latest release of the taxonomical information coming from NCBI.  
 The script will then convert the database into a format that can be used by ObiTools.   
 Usage:  
 •	drop the script in the folder you wish to download the gene bank into  
-•	run using bash (requires around 271G) `./download_EMBL.sh`  
-•	modifying the script allows for selecting specific sequences by having a look at the file structure at ftp://ftp.ebi.ac.uk/pub/databases/embl/release/std/ and modifying the option
-“-A rel_std_\*.dat.gz” accordingly  
-•	The folder “EMBL” can safely be deleted after successful conversion of the EMBL database into a format that can be used by ObiTools  
+•	run using bash (requires around 271G) `./download_EMBL  
+•	a list of taxonomic devisions can be specified if the user wishes to only download a part of the database  
+•	the folder “EMBL” can be deleted safely after successful conversion of the EMBL database into a format that can be used by ObiTools  
+
+taxonomic divisions that can be specified in any combination include:  
+•   HUM : human  
+•   FUN : fungi  
+•   VRL : viral  
+•   MUS : mouse  
+•   INV : invertebrate  
+•   ENV : environmental  
+•   ROD : rodent  
+•   PLN : plant  
+•   SYN : synthetic  
+•   MAM : mammal  
+•   PRO : prokaryote  
+•   TGN : transgenic  
+•   VRT : vertebrate  
+•   PHG : phage  
+•   UNC : unclassified  
+
+It is however important to note that:  
+"Each sequence is only assigned to one taxonomic division (otherwise the sequence would be duplicated in different parts of the database). However, as you can see from the list above, some taxonomic divisions overlap. Therefore, sequences are classified according to the most specific division. For example, a mouse sequence could belong to MUS, ROD, MAM or VRT divisions, but it is classified as MUS as this is the most specific category (lowest taxonomic node).
+
+Once a sequence is placed in the most specific taxonomic division, it is then excluded from all remaining taxonomic divisions so as not to duplicate data. For example, the mouse sequence is found in the MUS divisions, therefore it is excluded from the ROD, MAM and VRT divisions, even though a rat is a mammal and a vertebrate."  
+(https://www.ebi.ac.uk/training/online/course/nucleotide-sequence-data-resources-ebi/what-ena/how-data-structured)
 
 STEP 2:  
-ecoPCR_EMBL.sh:  
+ecoPCR_EMBL:  
 This script prepares a reference database in order to successfully identify the taxon of sequences that were collected from the environment.  
 For this we need to specify the primers that were used for capturing the barcodes.  
 If several primers were used it is possible to specify ambiguous bases in order to cover all of them. 
@@ -41,7 +63,7 @@ And finally we need to specify the list of taxids for which we would like to cre
 You can find the taxids for your species of interest here: https://www.ncbi.nlm.nih.gov/taxonomy   
 Usage:
 ```  
-ecoPCR_EMBL.sh FORWARD_PRIMER REVERSE_PRIMER  
+ecoPCR_EMBL FORWARD_PRIMER REVERSE_PRIMER  
 Generate reference database for the identification using ecoPCR  
   -i   list of taxids (mandatory)  
   -d   path to converted database directory (mandatory)  
@@ -54,11 +76,11 @@ Generate reference database for the identification using ecoPCR
 ```
 
 Example:
-`./ecoPCR_EMBL.sh GCGGTAATTCCAGCTCCAATAG CTCTGACAATGGAATACGAATA -i "33836 33849 33853" -d embl_last/`  
+`./ecoPCR_EMBL GCGGTAATTCCAGCTCCAATAG CTCTGACAATGGAATACGAATA -i "33836 33849 33853" -d embl_last/`  
 The Nucleotide ambiguity code (IUPAC) is supported, if you want to specify several primers.
 
 STEP 3:  
-MetBaN.sh:  
+MetBaN:  
 This script is the core of the pipeline.  
 The main input are the fastq files of the forward and reverse read of the environmental sequences that are to have their taxids identified by ObiTools.  
 As input it requires the path to both the converted database and the created reference sequences created from the specified taxids. These taxids need to be specified again in order to properly create pdfs containing trees that allow checking for the correctness of the identification of the environmental samples.  
@@ -74,7 +96,7 @@ The pipeline can either be run with either paired or unpaired reads and/or with 
 Additional information about the identified sequences can be found in a the provided result file.  
 Usage:  
 ```
-MetBaN.sh FORWARD_READ.fq REVERSE_READ.fq  
+MetBaN FORWARD_READ.fq REVERSE_READ.fq  
 Generate identification and phylogenetic tress for environmental reads  
 -i   list of taxids (mandatory)
 -g   path to the fasta that contains a single outgroup sequence (mandatory)
@@ -94,7 +116,7 @@ Generate identification and phylogenetic tress for environmental reads
 ```
 
 Example:  
-`./MetBaN.sh 1_S1_L001_R1_001.fastq 1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ../data/outgroup/Bolidomonas_outgroup.fas -r ecoPCR_database2017-05-15 -d embl_last/ -o long_test`
+`./MetBaN 1_S1_L001_R1_001.fastq 1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ../data/outgroup/Bolidomonas_outgroup.fas -r ecoPCR_database2017-05-15 -d embl_last/ -o long_test`
 
 ## Installation
 
