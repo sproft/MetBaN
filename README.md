@@ -46,11 +46,10 @@ taxonomic divisions that can be specified in any combination include:
 •   PHG : phage  
 •   UNC : unclassified  
 
-It is howerver important to note that:  
+It is however important to note that:  
 "Each sequence is only assigned to one taxonomic division (otherwise the sequence would be duplicated in different parts of the database). However, as you can see from the list above, some taxonomic divisions overlap. Therefore, sequences are classified according to the most specific division. For example, a mouse sequence could belong to MUS, ROD, MAM or VRT divisions, but it is classified as MUS as this is the most specific category (lowest taxonomic node).
-Taxonomic exclusions
 
-Once a sequence is placed in the most specific taxonomic division, it is then excluded from all remaining taxonomic divisions so as not to duplicate data. For example, the mouse sequence is found in the MUS divisions, therefore it is excluded from the ROD, MAM and VRT divisions, even though a rat is a mammal and a vertebrate (Figure 9)."
+Once a sequence is placed in the most specific taxonomic division, it is then excluded from all remaining taxonomic divisions so as not to duplicate data. For example, the mouse sequence is found in the MUS divisions, therefore it is excluded from the ROD, MAM and VRT divisions, even though a rat is a mammal and a vertebrate."  
 (https://www.ebi.ac.uk/training/online/course/nucleotide-sequence-data-resources-ebi/what-ena/how-data-structured)
 
 STEP 2:  
