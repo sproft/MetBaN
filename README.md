@@ -52,6 +52,9 @@ It is however important to note that:
 Once a sequence is placed in the most specific taxonomic division, it is then excluded from all remaining taxonomic divisions so as not to duplicate data. For example, the mouse sequence is found in the MUS divisions, therefore it is excluded from the ROD, MAM and VRT divisions, even though a rat is a mammal and a vertebrate."  
 (https://www.ebi.ac.uk/training/online/course/nucleotide-sequence-data-resources-ebi/what-ena/how-data-structured)
 
+Example:  
+`./download_EMBL HUM MUS`
+
 STEP 2:  
 ecoPCR_EMBL:  
 This script prepares a reference database in order to successfully identify the taxon of sequences that were collected from the environment.  
