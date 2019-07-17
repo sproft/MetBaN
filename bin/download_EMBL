@@ -1,5 +1,42 @@
 #!/bin/bash -e
 
+VERSION=1.0
+
+usage(){
+cat <<EOF
+Usage:
+download_EMBL (TAXONOMIC_DIVISIONS)
+download a fresh copy of the entire EMBL nucleotide database
+
+"Each sequence is only assigned to one taxonomic division (otherwise the sequence would be duplicated in different parts of the database).
+However, as you can see from the list above, some taxonomic divisions overlap.
+Therefore, sequences are classified according to the most specific division.
+For example, a mouse sequence could belong to MUS, ROD, MAM or VRT divisions, but it is classified as MUS as this is the most specific category (lowest taxonomic node).
+Once a sequence is placed in the most specific taxonomic division, it is then excluded from all remaining taxonomic divisions so as not to duplicate data.
+For example, the mouse sequence is found in the MUS divisions, therefore it is excluded from the ROD, MAM and VRT divisions, even though a rat is a mammal and a vertebrate"
+(https://www.ebi.ac.uk/training/online/course/nucleotide-sequence-data-resources-ebi/what-ena/how-data-structured)
+
+taxonomic divisions that can be specified in any combination include:
+   HUM : human
+   FUN : fungi
+   VRL : viral
+   MUS : mouse
+   INV : invertebrate
+   ENV : environmental
+   ROD : rodent
+   PLN : plant
+   SYN : synthetic
+   MAM : mammal
+   PRO : prokaryote
+   TGN : transgenic
+   VRT : vertebrate
+   PHG : phage
+   UNC : unclassified
+-V   show script version
+-h   show this help
+EOF
+exit 0; }
+
 SCR=`basename $0`;
 # rel dir
 # DIR=`dirname $(readlink $0 || echo $0)`;
@@ -38,7 +75,24 @@ fi;
 loge ok
 }
 
+# Execute getopt and check opts/args
+ARGS=`getopt -n "$SCR" -o "hV" -- "$@"`
+[ $? -ne 0 ] && exit 1; # Bad arguments
+eval set -- "$ARGS"
 
+while true; do
+case "$1" in
+-h) usage && exit 0;;
+-V) echo $VERSION && exit 0;;
+--) shift; break;;
+esac
+done;
+
+#check input
+for i in $@
+do
+[[ "$i" =~ ^(HUM|FUN|VRL|MUS|INV|ENV|ROD|PLN|SYN|MAM|PRO|TGN|VRT|PHG|UNC)$ ]] || { echo "The taxonomic divison $i is not an available option" ; exit 1 ; }
+done
 
 # check binaries
 PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$PATH;
@@ -53,7 +107,17 @@ cd embl_last
 #Download EMBL
 mkdir -p EMBL
 cd EMBL
-wget -nH --cut-dirs=5 -A rel_std_\*.dat.gz -m ftp://ftp.ebi.ac.uk/pub/databases/embl/release/std/
+
+if [ $# -eq 0 ]
+  then
+    wget -nH --cut-dirs=5 -A rel_std_\*.dat.gz -m ftp://ftp.ebi.ac.uk/pub/databases/embl/release/std/
+  else
+    for i in $@
+    do
+      wget -nH --cut-dirs=5 -A rel_std_${i,,}\*.dat.gz -m ftp://ftp.ebi.ac.uk/pub/databases/embl/release/std/
+    done
+  fi
+
 echo "unzipping files..."
 gunzip *.dat.gz
 cd ..
