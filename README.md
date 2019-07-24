@@ -25,8 +25,8 @@ This script will download the latest release of the EMBL gene databank in conjun
 The script will then convert the database into a format that can be used by ObiTools.   
 Usage:  
 •	drop the script in the folder you wish to download the gene bank into  
-•	run using bash (requires around 271G) `./download_EMBL  
-•	a list of taxonomic devisions can be specified if the user wishes to only download a part of the database  
+•	run using bash (requires around 271GB) `./download_EMBL`  
+•	a list of taxonomic divisions can be specified if the user wishes to only download a part of the database  
 •	the folder “EMBL” can be deleted safely after successful conversion of the EMBL database into a format that can be used by ObiTools  
 
 taxonomic divisions that can be specified in any combination include:  
