@@ -1,4 +1,4 @@
-PATH := bin:util/mafft/bin:util/tcoffee/compile:util/standard-RAxML:util/anaconda_ete/bin:util/OBITools/bin:util/ecoPCR/src:$(PATH)
+PATH := bin:util/mafft/bin:util/tcoffee/compile:util/standard-RAxML:util/anaconda_ete/bin:util/OBITools/bin:util/ecoPCR/src:util/Krona/KronaTools/bin:$(PATH)
 
 .PHONY: all clean dependencies obitools
 
@@ -14,6 +14,7 @@ dependencies:
 	hash mafft || $(MAKE) util/mafft
 	hash t_coffee || $(MAKE) util/tcoffee
 	hash raxmlHPC-PTHREADS || $(MAKE) util/raxml
+	hash ktImportTaxonomy || $(MAKE) util/krona
 	hash ecoPCR || $(MAKE) util/ecoPCR
 	test -s util/anaconda_ete/bin/conda || $(MAKE) util/miniconda
 	test -s util/OBITools/bin/obigrep || $(MAKE) util/obitools
@@ -65,6 +66,13 @@ util/ecoPCR:
 	cd util && wget https://git.metabarcoding.org/obitools/ecopcr/uploads/6f37991b325c8c171df7e79e6ae8d080/ecopcr-0.8.0.tar.gz && tar -zxvf ecopcr-*.tar.gz
 	cd util/ecoPCR/src/ && make
 	cd util && rm ecopcr-0.8.0.tar.gz
+
+util/krona:
+	mkdir -p util
+	cd util && git clone https://github.com/marbl/Krona.git
+	cd util/Krona/KronaTools && ./install.pl --prefix "."
+#	cd util/Krona/KronaTools && ./updateAccessions.sh
+	cd util/Krona/KronaTools && mkdir -p taxonomy && ./updateTaxonomy.sh
 
 #util/seqtk:
 #	mkdir -p util

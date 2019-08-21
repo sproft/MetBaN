@@ -117,8 +117,8 @@ done;
 
 
 # check binaries
-PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$PATH;
-for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-PTHREADS python; do
+PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$UDIR/Krona/KronaTools/bin:$PATH;
+for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-PTHREADS python ktImportTaxonomy; do
     check_bin $bin;
 done;
 
@@ -682,7 +682,7 @@ samples_index=[i for i,s in enumerate(samples) if "sample:" in s]
 
 for i in samples_index:
         s=samples[i].split("sample:")[1]
-        f_out=open("kronain/sample_"+s+".kronain","w")
+        f_out=open("sample_"+s+".kronain","w")
         for l in lines:
                 l=l.split("\t")
                 for n in range(int(l[i])):

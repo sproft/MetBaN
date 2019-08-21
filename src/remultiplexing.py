@@ -2,17 +2,17 @@ import sys,os
 import numpy as np
 import argparse
 
-numBases=5
+numBases=10
 
 parser = argparse.ArgumentParser(description='Script to help remultiplex sequencing files for MetBaN analysis')
-parser.add_argument('Forward Primer', metavar='Fprimer', type=str,
+parser.add_argument('fPrimer', metavar='ForwardPrimer', type=str,
                     help='The Forward Primer')
-parser.add_argument('Reverse Primer', metavar='RPrimer', type=str,
+parser.add_argument('rPrimer', metavar='ReversePrimer', type=str,
                     help='The Reverse Primer')
-parser.add_argument('FFiles', metavar='FList', type=str, nargs='+',
-                    help='The Forward Read Files')
-parser.add_argument('RFiles', metavar='RList', type=str, nargs='+',
-                    help='The Reverse Read Files')
+parser.add_argument('fList', metavar='Files', type=str, nargs='+',
+                    help='The Read Files')
+parser.add_argument('--paired', action="store_true",
+                    help='Whether the files are already paired')
 
 
 args = parser.parse_args()
@@ -49,20 +49,28 @@ def writeFilter(IFiles,FPrimer,RPrimer):
 
 
 if __name__ == "__main__":
-	FPrimer=sys.argv[1]
-	RPrimer=sys.argv[2]
+	FPrimer=args.fPrimer
+	RPrimer=args.rPrimer
 	
-	Files=sys.argv[3:]
+	Files=args.fList
 	
-	IFilesR1=Files[:len(Files)/2]
-	IFilesR2=Files[len(Files)/2:]
+	if args.paired:
+		IFiles=Files
+		R=open('all.fastq','w')
+		writeToAll(IFiles,R)
+		writeFilter(IFiles,FPrimer,RPrimer)
 
-	R1=open('all.R1.fastq','w')
-	R2=open('all.R2.fastq','w')
+		R.close()
+	else:
+		IFilesR1=Files[:len(Files)/2]
+		IFilesR2=Files[len(Files)/2:]
 
-	writeToAll(IFilesR1,R1)
-	writeToAll(IFilesR2,R2)
-	writeFilter(IFilesR1,FPrimer,RPrimer)
+		R1=open('all.R1.fastq','w')
+		R2=open('all.R2.fastq','w')
 
-	R1.close()
-	R2.close()
+		writeToAll(IFilesR1,R1)
+		writeToAll(IFilesR2,R2)
+		writeFilter(IFilesR1,FPrimer,RPrimer)
+
+		R1.close()
+		R2.close()
