@@ -10,7 +10,7 @@ VERSION=1.1.0
 usage(){
 cat <<EOF
 Usage:
-obiall FORWARD_READ.fq REVERSE_READ.fq
+MetBaN FORWARD_READ.fq REVERSE_READ.fq
 Generate identification and phylogenetic tress for
 environmental reads
 -i   list of taxids (mandatory)
@@ -117,8 +117,8 @@ done;
 
 
 # check binaries
-PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$PATH;
-for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-PTHREADS python; do
+PATH=$UDIR/mafft/bin:$UDIR/tcoffee/compile:$UDIR/standard-RAxML:$UDIR/anaconda_ete/bin:$UDIR/OBITools/bin:$UDIR/ecoPCR/src:$UDIR/Krona/KronaTools/bin:$PATH;
+for bin in illuminapairedend obigrep obihead ngsfilter obiuniq obiannotate obistat obiclean ecotag mafft t_coffee raxmlHPC-PTHREADS python ktImportTaxonomy; do
     check_bin $bin;
 done;
 
@@ -664,6 +664,41 @@ cp -f $OUT/FILES/RESULTS/*.tab $OUT/classification.result.tsv
 cp -rf $OUT/FILES/RESULTS/TREE/pdfs $OUT
 cp -rf $OUT/FILES/RESULTS/TREE/nwk $OUT
 cp -rf $OUT/FILES/RESULTS/TREE/tables $OUT
+
+############MAKE KRONA PLOTS
+echo krona plotting...
+mkdir $OUT/krona
+mkdir $OUT/krona/kronain
+cd $OUT/krona/kronain
+echo '########CREATE KRONA INPUT
+f_in=open("../../classification.result.tsv","r")
+
+header=f_in.readline()
+lines=f_in.readlines()
+f_in.close()
+samples=header.split("\t")
+samples_index=[i for i,s in enumerate(samples) if "sample:" in s]
+
+
+for i in samples_index:
+        s=samples[i].split("sample:")[1]
+        f_out=open("sample_"+s+".kronain","w")
+        for l in lines:
+                l=l.split("\t")
+                for n in range(int(l[i])):
+                        f_out.write("%s\t%s\n" % (l[0],l[len(l)-2]))
+
+        f_out.close()' > $OUT/krona/kronain/create_krona_in.py
+
+python create_krona_in.py
+
+for filename in $OUT/krona/kronain/*.kronain
+do
+ktImportTaxonomy $filename -o $filename.html
+done
+
+mv $OUT/krona/kronain/*.html $OUT/krona
+date
 
 
 if [ $DELETE -gt 0 ];then

@@ -10,7 +10,7 @@ VERSION=0.0.1
 usage(){
 cat <<EOF
 Usage:
-  ecoPCR_EMBL FORWARD_PRIMER REVERSE_PRIMER
+ecoPCR_EMBL FORWARD_PRIMER REVERSE_PRIMER
 Generate reference database for the identification using ecoPCR
   -i   list of taxids (mandatory)
   -d   path to converted EMBL database (mandatory)

@@ -7,7 +7,7 @@ fi
 
 if [[ -f ./embl_last/embl_last.ndx ]]
 then
-../bin/MetBaN.sh ./data/1_S1_L001_R1_001.fastq ./data/1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ./data/Bolidomonas_outgroup.fas -r ecoPCR_database -d embl_last/ -o results_test -b 2
+../bin/MetBaN ./data/1_S1_L001_R1_001.fastq ./data/1_S1_L001_R2_001.fastq -i "33836 33849 33853" -g ./data/Bolidomonas_outgroup.fas -r ecoPCR_database -d embl_last/ -o results_test -b 2
 else
 echo "test failed, try extracting tar-file manually"
 exit 1
